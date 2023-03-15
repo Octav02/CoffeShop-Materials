@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lista.h"
+#include "list.h"
 
 
 // Preconditions: Valid non-null pointers to a List object and character arrays for name and producer, and a non-negative integer for quantity.

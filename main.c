@@ -1,5 +1,5 @@
-#include "materie.h"
-#include "lista.h"
+#include "material.h"
+#include "list.h"
 #include "service.h"
 #include "ui.h"
 
