@@ -73,6 +73,78 @@ int getAllMaterialsByName(List *list, char *name) {
     return result;
 }
 
+List getMaterialsWithStartingLetter(List *list, char letter) {
+    List result = createEmptyList();
+    int len = sizeOfList(list);
+    for (int i = 0; i < len; i++)
+        if (getElement(list,i).name[0] == letter)
+            addElementToList(&result, getElement(list,i));
+    return result;
+}
+
+List getMaterialsWithLessQuantity(List* list, int quantity) {
+    List result = createEmptyList();
+    int len = sizeOfList(list);
+    for (int i = 0; i < len; i++)
+        if (getElement(list,i).quantity < quantity)
+            addElementToList(&result, getElement(list,i));
+    return result;
+}
+
+List getMaterialsOrderedByQuantity(List* list, int order) {
+    List result = createCopyOfList(list);
+    int len = sizeOfList(&result);
+    for (int i = 0; i < len - 1; i++) {
+        for (int j = i + 1; j < len; j++) {
+            if (order == 1) {
+                if (getElement(&result,i).quantity > getElement(&result,j).quantity) {
+                    ElemType aux = result.elements[i];
+                    result.elements[i] = result.elements[j];
+                    result.elements[j] = aux;
+                }
+            }
+            else if (order == 0){
+                if (getElement(&result,i).quantity < getElement(&result,j).quantity) {
+                    ElemType aux = result.elements[i];
+                    result.elements[i] = result.elements[j];
+                    result.elements[j] = aux;
+                }
+            }
+            else {
+                return *list;
+            }
+        }
+    }
+    return result;
+}
+
+List getMaterialsOrderedByName(List* list, int order) {
+    List result = createCopyOfList(list);
+    int len = sizeOfList(&result);
+    for (int i = 0; i < len - 1; i++) {
+        for (int j = i + 1; j < len; j++) {
+            if (order == 1) {
+                if (strcmp(getElement(list,i).name, getElement(list,j).name) > 0) {
+                    ElemType aux = result.elements[i];
+                    result.elements[i] = result.elements[j];
+                    result.elements[j] = aux;
+                }
+            }
+            else if (order == 0){
+                if (strcmp(getElement(list,i).name, getElement(list,j).name) < 0) {
+                    ElemType aux = result.elements[i];
+                    result.elements[i] = result.elements[j];
+                    result.elements[j] = aux;
+                }
+            }
+            else {
+                return *list;
+            }
+        }
+    }
+    return result;
+}
+
 void testCRUD() {
     List list = createEmptyList();
     int res = addMaterial(&list, "m1", "p1", 20);
@@ -124,5 +196,46 @@ void testCRUD() {
     res = addMaterial(&list, "m2", "p2", 20);
     assert(res == 0);
     assert(list.elements[0].quantity == 50);
+}
+
+void testFiltering() {
+    List list = createEmptyList();
+    addMaterial(&list,"dan","o2",4);
+    addMaterial(&list, "rob","ewq",5);
+    addMaterial(&list, "d", "titan",2);
+    assert(sizeOfMaterialList(&list) == 3);
+    List filterResult = getMaterialsWithStartingLetter(&list,'d');
+    assert(sizeOfMaterialList(&filterResult) == 2);
+    assert(getElement(&filterResult,0).quantity == 4);
+    assert(getElement(&filterResult,1).quantity == 2);
+
+    filterResult = getMaterialsWithLessQuantity(&list,5);
+    assert(sizeOfMaterialList(&filterResult) == 2);
+    assert(getElement(&filterResult,0).quantity == 4);
+    assert(getElement(&filterResult,1).quantity == 2);
+
+    filterResult = getMaterialsOrderedByQuantity(&list, 1);
+    assert(getElement(&filterResult,0).quantity == 2);
+    assert(sizeOfMaterialList(&filterResult) == 3);
+
+    filterResult = getMaterialsOrderedByQuantity(&list, 0);
+    assert(getElement(&filterResult,0).quantity == 5);
+    assert(sizeOfMaterialList(&filterResult) == 3);
+
+    filterResult = getMaterialsOrderedByQuantity(&list, 6);
+    assert(getElement(&filterResult,0).quantity == 4);
+    assert(sizeOfMaterialList(&filterResult) == 3);
+
+    filterResult = getMaterialsOrderedByName(&list, 1);
+    assert(getElement(&filterResult,0).quantity == 2);
+    assert(sizeOfMaterialList(&filterResult) == 3);
+
+    filterResult = getMaterialsOrderedByName(&list, 0);
+    assert(getElement(&filterResult,0).quantity == 5);
+    assert(sizeOfMaterialList(&filterResult) == 3);
+
+    filterResult = getMaterialsOrderedByName(&list, 6);
+    assert(getElement(&filterResult,0).quantity == 4);
+    assert(sizeOfMaterialList(&filterResult) == 3);
 
 }

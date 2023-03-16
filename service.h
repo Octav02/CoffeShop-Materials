@@ -45,4 +45,30 @@ int sizeOfMaterialList(List *list);
 // Return: An integer that represents the quantity of all materials with the same name(independent of producer).
 int getAllMaterialsByName(List *list, char *name);
 
+// Preconditions: Valid non-null pointer to a List object and character for the letter
+//Parameters: A pointer to a List object, the letter that we want the word to begin with
+//Postconditions: A List of Materials that begins with the letter given
+//Return: A List of Materials that begin with the letter given
+List getMaterialsWithStartingLetter(List *list, char letter);
+
+// Preconditions: Valid non-null pointer to a List object and integer for quantity
+//Parameters: A pointer to a List object, the quantity we want to search
+//Postconditions: A List of Materials that begins with the letter given
+//Return: A List of Materials that have less quantity than the quantity given as parameter
+List getMaterialsWithLessQuantity(List* list, int quantity);
+
+//Preconditions: Valid non-null pointer to a List object and integer for order(0-descending, 1-ascending)
+//Parameters: A pointer to a List object, the order to sort
+//Postconditions: A list of Materials sorted by quantity
+//Return: A list of Materials sorted by quantity
+List getMaterialsOrderedByQuantity(List* list, int order);
+
+//Preconditions: Valid non-null pointer to a List object and integer for order(0-descending, 1-ascending)
+//Parameters: A pointer to a List object, the order to sort
+//Postconditions: A list of Materials sorted by name
+//Return: A list of Materials sorted by name
+List getMaterialsOrderedByName(List* list, int order);
+
 void testCRUD();
+
+void testFiltering();

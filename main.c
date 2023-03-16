@@ -2,6 +2,7 @@
 #include "list.h"
 #include "service.h"
 #include "ui.h"
+#include <stdio.h>
 
 void runAllTests();
 
@@ -18,4 +19,5 @@ void runAllTests() {
     testCreateList();
     testIterateList();
     testCopyList();
+    testFiltering();
 }

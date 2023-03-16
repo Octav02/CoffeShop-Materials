@@ -1,0 +1,3 @@
+D:/Facultate/OOP/CoffeShop-Materials/cmake-build-debug-coverage/CMakeFiles/Lab2_4.dir
+D:/Facultate/OOP/CoffeShop-Materials/cmake-build-debug-coverage/CMakeFiles/edit_cache.dir
+D:/Facultate/OOP/CoffeShop-Materials/cmake-build-debug-coverage/CMakeFiles/rebuild_cache.dir

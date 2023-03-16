@@ -2,7 +2,7 @@
 #include "stdio.h"
 
 void printMenu() {
-    printf("1.Add Material\n2.Update Material\n3.Delete\n4.Get Material\n5.Print All\n6.Get Material quantity\n0.Exit\n");
+    printf("1.Add Material\n2.Update Material\n3.Delete\n4.Get Material\n5.Print All\n6.Get Material quantity\n7.Filter By Starting Letter\n8.Filter By Less Quantity\n9.Sort By Name\n10.Sort By Quantity\n0.Exit\n");
 }
 
 void addMaterialUI(List *list) {
@@ -77,9 +77,9 @@ void getMaterialUI(List *list) {
     scanf("%s", producer);
     ElemType material = getMaterial(list, name, producer);
     if (material.quantity == -1)
-        printf("The searched material does not exist");
+        printf("The searched material does not exist\n");
     else
-        printf("Searched Material: Name  %s | Producer  %s | Quantity  %d", material.name, material.producer,
+        printf("Searched Material: Name  %s | Producer  %s | Quantity  %d\n", material.name, material.producer,
                material.quantity);
 }
 
@@ -102,7 +102,39 @@ void getMaterialByNameUI(List *list) {
     printf("Name : ");
     scanf("%s", name);
     int qt = getAllMaterialsByName(list, name);
-    printf("The selected material has a quantity of %d", qt);
+    printf("The selected material has a quantity of %d\n", qt);
+}
+
+void filterByStartingLetterUI(List *list) {
+    char letter;
+    printf("Letter :");
+    scanf("%c", &letter);
+    List filterResult = getMaterialsWithStartingLetter(list,letter);
+    printListUI(&filterResult);
+}
+
+void filterByLessQuantityUI(List * list) {
+    int quantity = 0;
+    printf("Quantity : ");
+    scanf("%d", &quantity);
+    List filterResult = getMaterialsWithLessQuantity(list, quantity);
+    printListUI(&filterResult);
+}
+
+void sortByNameUI(List* list) {
+    int order = 0;
+    printf("Order (0-descending 1-ascending) : ");
+    scanf("%d", &order);
+    List filterResult = getMaterialsOrderedByName(list, order);
+    printListUI(&filterResult);
+}
+
+void sortByQuantityUI(List* list) {
+    int order = 0;
+    printf("Order (0-descending 1-ascending) : ");
+    scanf("%d", &order);
+    List filterResult = getMaterialsOrderedByQuantity(list, order);
+    printListUI(&filterResult);
 }
 
 void runUI(List *list) {
@@ -136,6 +168,22 @@ void runUI(List *list) {
             }
             case 6: {
                 getMaterialByNameUI(list);
+                break;
+            }
+            case 7: {
+                filterByStartingLetterUI(list);
+                break;
+            }
+            case 8: {
+                filterByLessQuantityUI(list);
+                break;
+            }
+            case 9: {
+                sortByNameUI(list);
+                break;
+            }
+            case 10: {
+                sortByQuantityUI(list);
                 break;
             }
             case 0: {
