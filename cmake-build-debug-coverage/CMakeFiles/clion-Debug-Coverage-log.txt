@@ -1,4 +1,16 @@
-"D:\Programs\CLion 2022.3.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/Programs/CLion 2022.3.2/bin/ninja/win/x64/ninja.exe" -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_C_FLAGS=--coverage -G Ninja -S D:\Facultate\OOP\CoffeShop-Materials -B D:\Facultate\OOP\CoffeShop-Materials\cmake-build-debug-coverage
+"D:\Programs\CLion 2022.3.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_C_FLAGS=--coverage -G "CodeBlocks - MinGW Makefiles" -S D:\Facultate\OOP\CoffeShop-Materials1 -B D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage
+-- The C compiler identification is GNU 11.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: D:/Programs/CLion 2022.3.2/bin/mingw/bin/gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: D:/Facultate/OOP/CoffeShop-Materials/cmake-build-debug-coverage
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_CXX_FLAGS
+
+
+-- Build files have been written to: D:/Facultate/OOP/CoffeShop-Materials1/cmake-build-debug-coverage

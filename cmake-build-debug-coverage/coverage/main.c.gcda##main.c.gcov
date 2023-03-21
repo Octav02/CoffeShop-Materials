@@ -1,0 +1,48 @@
+        -:    0:Source:D:/Facultate/OOP/CoffeShop-Materials1/main.c
+        -:    0:Graph:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\main.c.gcno
+        -:    0:Data:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\main.c.gcda
+        -:    0:Runs:1
+        -:    1:#include "material.h"
+        -:    2:#include "list.h"
+        -:    3:#include "service.h"
+        -:    4:#include "ui.h"
+        -:    5:#include <stdio.h>
+        -:    6:#include <crtdbg.h>
+        -:    7:
+        -:    8:void runAllTests();
+        -:    9:
+function main called 1 returned 100% blocks executed 100%
+        1:   10:int main() {
+        1:   11:    CoffeeShop coffeeShop = createCoffeeShop();
+        1:   11-block  0
+call    0 returned 1
+        1:   12:    runAllTests();
+call    0 returned 1
+        1:   13:    runUI(&coffeeShop);
+call    0 returned 1
+        -:   14:    _CrtDumpMemoryLeaks();
+        1:   15:    return 0;
+        -:   16:}
+        -:   17:
+function runAllTests called 1 returned 100% blocks executed 100%
+        1:   18:void runAllTests() {
+        1:   19:    testCRUD();
+        1:   19-block  0
+call    0 returned 1
+        1:   20:    testCreateDestroyValidate();
+call    0 returned 1
+        1:   21:    testCreateList();
+call    0 returned 1
+        1:   22:    testListOfLists();
+call    0 returned 1
+        1:   23:    testIterateList();
+call    0 returned 1
+        1:   24:    testCopyList();
+call    0 returned 1
+        1:   25:    testUndo();
+call    0 returned 1
+        1:   26:    testFiltering();
+call    0 returned 1
+        1:   27:    testEnsureCapacity();
+call    0 returned 1
+        1:   28:}

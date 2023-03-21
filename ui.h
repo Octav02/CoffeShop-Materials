@@ -2,18 +2,23 @@
 
 void printMenu();
 
-void printListUI(List *list);
+void printListUI(List* list);
 
-void addMaterialUI(List *list);
+void addMaterialUI(CoffeeShop* coffeeShop);
 
-void removeMaterialUI(List *list);
+void removeMaterialUI(CoffeeShop* coffeeShop);
 
-void updateMaterialUI(List *list);
+void updateMaterialUI(CoffeeShop* coffeeShop);
 
-void getMaterialUI(List *list);
+void getMaterialUI(CoffeeShop* coffeeShop);
 
-void getMaterialByNameUI(List *list);
+void getMaterialByNameUI(CoffeeShop* coffeeShop);
+void filterByStartingLetterUI(CoffeeShop* coffeeShop);
+void filterByLessQuantityUI(CoffeeShop* coffeeShop);
+void sortByNameUI(CoffeeShop* coffeeShop);
+void sortByQuantityUI(CoffeeShop* coffeeShop);
+void runUI(CoffeeShop* coffeeShop);
 
-void runUI(List *list);
+void undoUI(CoffeeShop* coffeeShop);
 
 

@@ -8,9 +8,9 @@
 void runAllTests();
 
 int main() {
-    List list = createEmptyList();
+    CoffeeShop coffeeShop = createCoffeeShop();
     runAllTests();
-    runUI(&list);
+    runUI(&coffeeShop);
     _CrtDumpMemoryLeaks();
     return 0;
 }
@@ -19,8 +19,10 @@ void runAllTests() {
     testCRUD();
     testCreateDestroyValidate();
     testCreateList();
+    testListOfLists();
     testIterateList();
     testCopyList();
+    testUndo();
     testFiltering();
     testEnsureCapacity();
 }
