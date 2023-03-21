@@ -11,8 +11,9 @@
  * List definition
  * */
 typedef struct {
-    ElemType elements[60];
+    ElemType* elements;
     int length;
+    int capacity;
 } List;
 
 // Preconditions: None
@@ -26,6 +27,12 @@ List createEmptyList();
 // Postconditions: The memory allocated for the list and its elements is freed.
 // Return: None.
 void destroyList(List* list);
+
+// Preconditions: A valid pointer to a list
+// Parameters: A pointer to the list
+// Postconditions: The function verifies if the list has enough space to hold a new element. otherwise it allocates more space
+// Returns: -
+void ensureCapacity(List *list);
 
 // Preconditions: A valid pointer to a list and a valid position in the list (0 <= pos < size of list).
 // Parameters: A pointer to the list and the position of the element that needs to be retrieved.
@@ -74,3 +81,5 @@ void testCreateList();
 void testIterateList();
 
 void testCopyList();
+
+void testEnsureCapacity();

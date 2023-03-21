@@ -1,8 +1,8 @@
 #pragma once
 
 typedef struct {
-    char name[30];
-    char producer[30];
+    char* name;
+    char* producer;
     int quantity;
 } Material;
 

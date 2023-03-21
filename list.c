@@ -6,12 +6,19 @@
 
 List createEmptyList() {
     List rez;
+    rez.capacity = 5;
+    rez.elements = malloc(sizeof(ElemType) * rez.capacity);
     rez.length = 0;
     return rez;
 }
 
 void destroyList(List *list) {
     list->length = 0;
+    for (int i = 0; i < sizeOfList(list); i++)
+        destroyMaterial(&list->elements[i]);
+    free(list->elements);
+    list->length = 0;
+    list->elements = NULL;
 }
 
 ElemType getElement(List *list, int pos) {
@@ -20,10 +27,10 @@ ElemType getElement(List *list, int pos) {
 
 int getPosition(List *list, ElemType element) {
     int pos = -1;
-    for (int i = 0; i < sizeOfList(list) && pos == -1; i++) {
+    for (int i = 0; i < sizeOfList(list) && pos == -1; i++)
         if (!strcmp(element.name, list->elements[i].name) && !strcmp(element.producer, list->elements[i].producer))
             pos = i;
-    }
+
     return pos;
 }
 
@@ -31,7 +38,22 @@ int sizeOfList(List *list) {
     return list->length;
 }
 
+void ensureCapacity(List *list) {
+    if (list->length < list->capacity)
+        return;
+    int newCapacity = list->capacity + 5;
+    ElemType *newElements = malloc(sizeof(ElemType) * newCapacity);
+
+    for (int i = 0; i < list->length; i++)
+        newElements[i] = list->elements[i];
+
+    free(list->elements);
+    list->elements = newElements;
+    list->capacity = newCapacity;
+}
+
 void addElementToList(List *list, ElemType element) {
+    ensureCapacity(list);
     list->elements[list->length] = element;
     list->length++;
 }
@@ -71,6 +93,7 @@ void testCreateList() {
 void testIterateList() {
     List list = createEmptyList();
     addElementToList(&list, createMaterial("n1", "p1", 20));
+    assert(list.elements[0].quantity == 20);
     int position = getPosition(&list, createMaterial("n1", "p1", 20));
     assert(position == 0);
 
@@ -98,6 +121,7 @@ void testIterateList() {
     }
     destroyList(&list);
     assert(sizeOfList(&list) == 0);
+    assert(list.elements == NULL);
 }
 
 void testCopyList() {
@@ -115,4 +139,14 @@ void testCopyList() {
         assert(!strcmp(elem1.producer, elem2.producer));
         assert(elem1.quantity == elem2.quantity);
     }
+}
+
+void testEnsureCapacity() {
+    List list = createEmptyList();
+    for (int i = 0; i < 5; i++)
+        addElementToList(&list, createMaterial("da", "NU", i));
+    ensureCapacity(&list);
+    assert(sizeOfList(&list) == 5);
+    addElementToList(&list, createMaterial("da", "NU", 4));
+    assert(sizeOfList(&list) == 6);
 }

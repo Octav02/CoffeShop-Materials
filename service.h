@@ -69,6 +69,12 @@ List getMaterialsOrderedByQuantity(List* list, int order);
 //Return: A list of Materials sorted by name
 List getMaterialsOrderedByName(List* list, int order);
 
+// Preconditions: A valid pointer to a list.
+// Parameters: A pointer to the list that needs to be destroyed.
+// Postconditions: The memory allocated for the list and its elements is freed.
+// Return: None.
+void destroyMaterialList(List *list);
+
 void testCRUD();
 
 void testFiltering();

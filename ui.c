@@ -37,15 +37,16 @@ void updateMaterialUI(List *list) {
     printf("Producer : ");
     scanf("%s", producer);
     printf("New Name : ");
-    scanf("%s", name);
+    scanf("%s", newName);
     printf("New Producer : ");
-    scanf("%s", producer);
+    scanf("%s", newProducer);
     printf("New Quantity : ");
     scanf_s("%d", &newQuantity);
 
     int res = updateMaterial(list, name, producer, newName, newProducer, newQuantity);
+    printf("%s\n%s\n%d",  newName, newProducer, newQuantity);
     if (res != 0)
-        printf("There was an error\n");
+        printf("There was an error %d\n", res);
     else
         printf("Element added successfully\n");
 
@@ -111,6 +112,7 @@ void filterByStartingLetterUI(List *list) {
     scanf("%c", &letter);
     List filterResult = getMaterialsWithStartingLetter(list,letter);
     printListUI(&filterResult);
+    destroyMaterialList(&filterResult);
 }
 
 void filterByLessQuantityUI(List * list) {
@@ -119,6 +121,7 @@ void filterByLessQuantityUI(List * list) {
     scanf("%d", &quantity);
     List filterResult = getMaterialsWithLessQuantity(list, quantity);
     printListUI(&filterResult);
+    destroyMaterialList(&filterResult);
 }
 
 void sortByNameUI(List* list) {
@@ -127,6 +130,7 @@ void sortByNameUI(List* list) {
     scanf("%d", &order);
     List filterResult = getMaterialsOrderedByName(list, order);
     printListUI(&filterResult);
+    destroyMaterialList(&filterResult);
 }
 
 void sortByQuantityUI(List* list) {
@@ -135,6 +139,7 @@ void sortByQuantityUI(List* list) {
     scanf("%d", &order);
     List filterResult = getMaterialsOrderedByQuantity(list, order);
     printListUI(&filterResult);
+    destroyMaterialList(&filterResult);
 }
 
 void runUI(List *list) {
@@ -187,6 +192,7 @@ void runUI(List *list) {
                 break;
             }
             case 0: {
+                destroyMaterialList(list);
                 printf("Bye !\n");
                 running = 0;
             }
