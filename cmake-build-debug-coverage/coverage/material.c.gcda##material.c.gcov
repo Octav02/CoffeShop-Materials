@@ -1,160 +1,195 @@
-        -:    0:Source:D:/Facultate/OOP/CoffeShop-Materials1/material.c
-        -:    0:Graph:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\material.c.gcno
-        -:    0:Data:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\material.c.gcda
+        -:    0:Source:/home/octav/CLionProjects/CoffeeShopMaterials/material.c
+        -:    0:Graph:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/material.c.gcno
+        -:    0:Data:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/material.c.gcda
         -:    0:Runs:1
         -:    1:#include "material.h"
-        -:    2:#include <string.h>
-        -:    3:#include <assert.h>
-        -:    4:#include <stdlib.h>
-function createMaterial called 27 returned 100% blocks executed 100%
-       27:    5:Material* createMaterial(char *name, char *producer, int quantity) {
-       27:    6:    Material *rez = malloc(sizeof(Material));
-       27:    7:    size_t len = strlen(name) + 1;
-       27:    8:    rez->name = malloc(sizeof(char) * len);
-       27:    9:    strcpy_s(rez->name, len, name);
-       27:    9-block  0
-call    0 returned 27
-       27:   10:    len = strlen(producer) + 1;
-       27:   11:    rez->producer = malloc(sizeof(char) * len);
-       27:   12:    strcpy_s(rez->producer, len, producer);
-call    0 returned 27
-       27:   13:    rez->quantity = quantity;
-       27:   14:    return rez;
-        -:   15:}
-        -:   16:
-function destroyMaterial called 7 returned 100% blocks executed 100%
-        7:   17:void destroyMaterial(Material *material) {
-        7:   18:    free(material -> name);
-        7:   19:    free(material -> producer);
-        7:   20:    free(material);
-        7:   21:}
-        -:   22:
-function copyMaterial called 1 returned 100% blocks executed 100%
-        1:   23:Material* copyMaterial(Material *material) {
-        1:   24:    return createMaterial(material->name, material->producer, material->quantity);
-        1:   24-block  0
-call    0 returned 1
-        -:   25:}
-        -:   26:
-function validateMaterial called 14 returned 100% blocks executed 100%
-       14:   27:int validateMaterial(Material* material) {
-       14:   28:    if (strlen(material->name) == 0)
-       14:   28-block  0
-branch  0 taken 3 (fallthrough)
-branch  1 taken 11
-        3:   29:        return 1;
-        3:   29-block  0
-       11:   30:    if (strlen(material->producer) == 0)
-       11:   30-block  0
+        -:    2:
+        -:    3:#include <string.h>
+        -:    4:#include <assert.h>
+        -:    5:#include <stdlib.h>
+        -:    6:
+function createMaterial called 65 returned 100% blocks executed 100%
+       65:    7:Material *createMaterial(char *name, char *producer, int quantity) {
+       65:    8:    Material *rez = malloc(sizeof(Material));
+       65:    9:    size_t nrC = strlen(name) + 1;
+       65:   10:    if (nrC == 1) nrC = 2;
+       65:   10-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 63
+        2:   10-block  1
+       65:   11:    rez->name = malloc(sizeof(char) * nrC);
+       65:   12:    strcpy(rez->name, name);
+       65:   13:    nrC = strlen(producer) + 1;
+       65:   14:    if (nrC == 1) nrC = 2;
+       65:   14-block  0
 branch  0 taken 1 (fallthrough)
-branch  1 taken 10
+branch  1 taken 64
+        1:   14-block  1
+       65:   15:    rez->producer = malloc(sizeof(char) * nrC);
+       65:   16:    strcpy(rez->producer, producer);
+       65:   17:    rez->quantity = quantity;
+       65:   18:    return rez;
+       65:   18-block  0
+        -:   19:}
+        -:   20:
+function destroyMaterial called 65 returned 100% blocks executed 100%
+       65:   21:void destroyMaterial(Material *material) {
+       65:   22:    free(material->producer);
+       65:   23:    free(material->name);
+       65:   24:    free(material);
+       65:   25:}
+        -:   26:
+function validateMaterial called 19 returned 100% blocks executed 100%
+       19:   27:int validateMaterial(Material *material) {
+       19:   28:    if (strlen(material->name) == 0)
+       19:   28-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 17
+        2:   29:        return 1;
+        2:   29-block  0
+       17:   30:    if (strlen(material->producer) == 0)
+       17:   30-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 16
         1:   31:        return 2;
         1:   31-block  0
-       10:   32:    if (material->quantity < 0)
-       10:   32-block  0
-branch  0 taken 1 (fallthrough)
-branch  1 taken 9
-        1:   33:        return 3;
-        1:   33-block  0
-        9:   34:    return 0;
-        9:   34-block  0
+       16:   32:    if (material->quantity < 0)
+       16:   32-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 14
+        2:   33:        return 3;
+        2:   33-block  0
+       14:   34:    return 0;
+       14:   34-block  0
         -:   35:}
         -:   36:
-function testCreateDestroyValidate called 1 returned 100% blocks executed 63%
-        1:   37:void testCreateDestroyValidate() {
-        1:   38:    Material* material = createMaterial("Arabica", "P1", 1000);
-        1:   38-block  0
-call    0 returned 1
-       1*:   39:    assert(!strcmp(material->name, "Arabica"));
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:   39-block  0
-call    2 never executed
-        1:   39-block  1
-       1*:   40:    assert(!strcmp(material->producer, "P1"));
-        1:   40-block  0
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:   40-block  1
-call    2 never executed
-        1:   40-block  2
-       1*:   41:    assert(material->quantity == 1000);
-        1:   41-block  0
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:   41-block  1
-call    2 never executed
-        1:   41-block  2
-        1:   42:    Material* copMaterial = copyMaterial(material);
-        1:   42-block  0
-call    0 returned 1
-       1*:   43:    assert(!strcmp(copMaterial->name, "Arabica"));
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:   43-block  0
-call    2 never executed
-        1:   43-block  1
-       1*:   44:    assert(!strcmp(copMaterial->producer, "P1"));
+        -:   37:
+function copyMaterial called 38 returned 100% blocks executed 100%
+       38:   38:Material *copyMaterial(Material *material) {
+       38:   39:    Material *rez = createMaterial(material->name, material->producer, material->quantity);
+       38:   39-block  0
+call    0 returned 38
+       38:   40:    return rez;
+        -:   41:}
+        -:   42:
+function testCreateDestroy called 1 returned 100% blocks executed 64%
+        1:   43:void testCreateDestroy() {
+        1:   44:    Material *material = createMaterial("Name", "Producer", 10);
         1:   44-block  0
+call    0 returned 1
+       1*:   45:    assert(material != NULL);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:   44-block  1
+    %%%%%:   45-block  0
 call    2 never executed
-        1:   44-block  2
-       1*:   45:    assert(copMaterial->quantity == 1000);
-        1:   45-block  0
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:   45-block  1
-call    2 never executed
-        1:   45-block  2
-       1*:   46:    assert(validateMaterial(material) == 0);
+       1*:   46:    assert(strcmp(material->name, "Name") == 0);
         1:   46-block  0
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
     %%%%%:   46-block  1
-call    3 never executed
-        1:   46-block  2
-        1:   47:    destroyMaterial(material);
+call    2 never executed
+       1*:   47:    assert(strcmp(material->producer, "Producer") == 0);
         1:   47-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:   47-block  1
+call    2 never executed
+       1*:   48:    assert(material->quantity == 10);
+        1:   48-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:   48-block  1
+call    2 never executed
+        1:   49:    destroyMaterial(material);
+        1:   49-block  0
 call    0 returned 1
-        1:   48:    destroyMaterial(copMaterial);
+        1:   50:}
+        -:   51:
+function testCopy called 1 returned 100% blocks executed 69%
+        1:   52:void testCopy() {
+        1:   53:    Material *material = createMaterial("Name", "Producer", 10);
+        1:   53-block  0
 call    0 returned 1
-        -:   49:
-        1:   50:    material = createMaterial("","Da",32);
+        1:   54:    Material *copy = copyMaterial(material);
 call    0 returned 1
-       1*:   51:    assert(validateMaterial(material) == 1);
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:   51-block  0
-call    3 never executed
-        1:   51-block  1
-        1:   52:    Material *material1 = createMaterial("Africana", "", 1000);
-        1:   52-block  0
-call    0 returned 1
-       1*:   53:    assert(validateMaterial(material1) == 2);
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:   53-block  0
-call    3 never executed
-        1:   53-block  1
-        1:   54:    Material* material2 = createMaterial("Robusta", "P2", -40);
-        1:   54-block  0
-call    0 returned 1
-       1*:   55:    assert(validateMaterial(material2) == 3);
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
+       1*:   55:    assert(copy != NULL);
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
     %%%%%:   55-block  0
-call    3 never executed
-        1:   55-block  1
-        1:   56:    destroyMaterial(material1);
+call    2 never executed
+       1*:   56:    assert(strcmp(copy->name, "Name") == 0);
         1:   56-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:   56-block  1
+call    2 never executed
+       1*:   57:    assert(strcmp(copy->producer, "Producer") == 0);
+        1:   57-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:   57-block  1
+call    2 never executed
+       1*:   58:    assert(copy->quantity == 10);
+        1:   58-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:   58-block  1
+call    2 never executed
+        1:   59:    destroyMaterial(material);
+        1:   59-block  0
 call    0 returned 1
-        1:   57:    destroyMaterial(material2);
+        1:   60:    destroyMaterial(copy);
 call    0 returned 1
-        -:   58:
-        1:   59:}
+        1:   61:}
+        -:   62:
+function testValidate called 1 returned 100% blocks executed 81%
+        1:   63:void testValidate() {
+        1:   64:    Material *material = createMaterial("", "Producer", 10);
+        1:   64-block  0
+call    0 returned 1
+       1*:   65:    assert(validateMaterial(material) == 1);
+call    0 returned 1
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:   65-block  0
+call    3 never executed
+        1:   66:    destroyMaterial(material);
+        1:   66-block  0
+call    0 returned 1
+        -:   67:
+        1:   68:    material = createMaterial("Name", "", 10);
+call    0 returned 1
+       1*:   69:    assert(validateMaterial(material) == 2);
+call    0 returned 1
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:   69-block  0
+call    3 never executed
+        1:   70:    destroyMaterial(material);
+        1:   70-block  0
+call    0 returned 1
+        -:   71:
+        1:   72:    material = createMaterial("Name", "Producer", -1);
+call    0 returned 1
+       1*:   73:    assert(validateMaterial(material) == 3);
+call    0 returned 1
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:   73-block  0
+call    3 never executed
+        1:   74:    destroyMaterial(material);
+        1:   74-block  0
+call    0 returned 1
+        -:   75:
+        1:   76:    material = createMaterial("Name", "Producer", 10);
+call    0 returned 1
+       1*:   77:    assert(validateMaterial(material) == 0);
+call    0 returned 1
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:   77-block  0
+call    3 never executed
+        1:   78:    destroyMaterial(material);
+        1:   78-block  0
+call    0 returned 1
+        1:   79:}

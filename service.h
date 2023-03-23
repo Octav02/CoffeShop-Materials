@@ -1,88 +1,46 @@
-#pragma once
-
 #include "list.h"
+
 typedef struct {
-    List* materialList;
-    List* undoList;
+    List *materialList;
+    List *undoList;
 } CoffeeShop;
+
+/*creates a new CoffeeShop object and initializes its member variables*/
 CoffeeShop createCoffeeShop();
-
-// Preconditions: Valid non-null pointers to a List object and character arrays for name and producer, and a non-negative integer for quantity.
-// Parameters: A pointer to a List object, the name, producer, and quantity of the new "Material" object to be added to the list.
-// Postconditions: A new "Material" object is created and added to the list. If the Material object already exists, it adds the quantity to the specified Material
-// Return: 0 if the material was successfully added to the list, (1,2,3- based on validation function and -1 if elem found in list) if there was an error.
+/*frees the memory allocated for a CoffeeShop object and its member variables*/
+void destroyCoffeeShop(CoffeeShop *coffeeShop);
+/*adds a new material to the coffee shop's inventory or increases
+ * the quantity if the material already exists*/
 int addMaterial(CoffeeShop *coffeeShop, char *name, char *producer, int quantity);
+/*Updates the information of a material at a given position in the coffee shop's inventory*/
+int updateMaterial(CoffeeShop *coffeeShop, int pos, char *name, char *producer, int quantity);
+/*removes a material at a given position from the coffee shop's inventory*/
+int removeMaterial(CoffeeShop *coffeeShop, int pos);
+/* returns a pointer to the material at a given position in the coffee shop's inventory*/
+Material *getMaterial(CoffeeShop *coffeeShop, int pos);
+/*undoes the last modification made to the coffee shop's inventory*/
+int undo(CoffeeShop *coffeeShop);
+/* returns the number of materials in the coffee shop's inventory*/
+int sizeOfMaterialList(CoffeeShop *coffeeShop);
+/*returns the total quantity of a given material in the coffee shop's inventory*/
+int getAllMaterialsByName(CoffeeShop *coffeeShop, char *name);
+/*returns a pointer to the coffee shop's inventory*/
+List *getAllMaterials(CoffeeShop *coffeeShop);
+/*returns a list of all materials whose name starts with a given letter*/
+List *getAllMaterialsWithStartingLetter(CoffeeShop *coffeeShop, char letter);
+/*returns a list of all materials whose quantity is less than a given value*/
+List *getMaterialsWithLessQuantity(CoffeeShop *coffeeShop, int quantity);
+/*sorts the coffee shop's inventory by quantity, either in ascending or descending order.*/
+List *sortByQuantity(CoffeeShop *coffeeShop, int order);
+/*sorts the coffee shop's inventory by name, either in ascending or descending order.*/
+List *sortByName(CoffeeShop *coffeeShop, int order);
 
-// Preconditions: Valid non-null pointers to a List object and character arrays for name and producer, and a non-negative integer for quantity.
-// Parameters: A pointer to a List object, the name, producer, and quantity of the "Material" object to be updated in the list.
-// Postconditions: The "Material" object is updated with the given name, producer, and quantity.
-// Return: 0 if the material was successfully updated,  (1,2,3- based on validation function and -1 if elem not-found in list) if there was an error.
-int updateMaterial(CoffeeShop *coffeeShop, int pos,char *newName, char *newProducer, int quantity);
+void testCreateCoffeeShop();
 
-// Preconditions: Valid non-null pointers to a List object and a character array for name.
-// Parameters: A pointer to a List object, the name of the "Material" object to be deleted from the list.
-// Postconditions: The "Material" object with the given name is deleted from the list.
-// Return: 0 if the material was successfully deleted, -1 if there was an error(not found).
-int deleteMaterial(CoffeeShop *coffeeShop, int pos) ;
-
-// Preconditions: Valid non-null pointers to a List object and a character array for name.
-// Parameters: A pointer to a List object, the name of the "Material" object to be retrieved from the list.
-// Postconditions: The "Material" object with the given name is returned from the list.
-// Return: The "Material" object with the given name, An invalid Material Object if not found in list..
-Material* getMaterial(List *list, char *name, char *producer);
-
-// Preconditions: Valid non-null pointer to a List object.
-// Parameters: A pointer to a List object.
-// Postconditions: A copy of the list containing all "Material" objects is returned.
-// Return: A new list containing all "Material" objects in the original list.
-List* getAllMaterials(List *list);
-
-// Preconditions: A valid pointer to a material list.
-// Parameters: A pointer to the material list.
-// Postconditions: None.
-// Return: The number of elements in the list.
-int sizeOfMaterialList(List *list);
-
-// Preconditions: Valid non-null pointer to a List object and character array for name.
-// Parameters: A pointer to a List object, the name of the Material that we want to get all the quantity(independent of producer).
-// Postconditions: An integer that represents the quantity of all materials with the same name(independent of producer).
-// Return: An integer that represents the quantity of all materials with the same name(independent of producer).
-int getAllMaterialsByName(List *list, char *name);
-
-// Preconditions: Valid non-null pointer to a List object and character for the letter
-//Parameters: A pointer to a List object, the letter that we want the word to begin with
-//Postconditions: A List of Materials that begins with the letter given
-//Return: A List of Materials that begin with the letter given
-List* getMaterialsWithStartingLetter(List *list, char letter);
-
-// Preconditions: Valid non-null pointer to a List object and integer for quantity
-//Parameters: A pointer to a List object, the quantity we want to search
-//Postconditions: A List of Materials that begins with the letter given
-//Return: A List of Materials that have less quantity than the quantity given as parameter
-List* getMaterialsWithLessQuantity(List* list, int quantity);
-
-//Preconditions: Valid non-null pointer to a List object and integer for order(0-descending, 1-ascending)
-//Parameters: A pointer to a List object, the order to sort
-//Postconditions: A list of Materials sorted by quantity
-//Return: A list of Materials sorted by quantity
-List* getMaterialsOrderedByQuantity(List* list, int order);
-
-//Preconditions: Valid non-null pointer to a List object and integer for order(0-descending, 1-ascending)
-//Parameters: A pointer to a List object, the order to sort
-//Postconditions: A list of Materials sorted by name
-//Return: A list of Materials sorted by name
-List* getMaterialsOrderedByName(List* list, int order);
-
-// Preconditions: A valid pointer to a list.
-// Parameters: A pointer to the list that needs to be destroyed.
-// Postconditions: The memory allocated for the list and its elements is freed.
-// Return: None.
-void destroyMaterialList(List *list);
-
-int undo(CoffeeShop* coffeeShop);
-
-void testCRUD();
+void testCRUDService();
 
 void testUndo();
 
 void testFiltering();
+
+void testSorting();

@@ -1,29 +1,30 @@
 #pragma once
 
 typedef struct {
-    char* name;
-    char* producer;
+    char *name;
+    char *producer;
     int quantity;
 } Material;
 
-// Preconditions: Valid non-null pointers to character arrays for name and producer, and a non-negative integer for quantity.
-// Parameters: The name, producer, and quantity of the new "Material" object that needs to be created.
-// Postconditions: A new "Material" object is created and returned.
-// Return: The newly created "Material" object.
-Material* createMaterial(char *name, char *producer, int quantity);
-
-// Preconditions: A valid pointer to a "Material" object that needs to be destroyed.
-// Parameters: A pointer to the "Material" object that needs to be destroyed.
-// Postconditions: The memory allocated for the "Material" object is freed.
-// Return: None.
+/*This function creates a new Material object by dynamically allocating memory for it
+ * and initializes its fields name, producer, and quantity with the values provided as arguments.
+ * It returns a pointer to the created object.*/
+Material *createMaterial(char *name, char *producer, int quantity);
+/*This function deallocates the memory that was dynamically allocated for a given Material object.
+ * It first frees the memory allocated for the producer and name fields,
+ * and then frees the memory allocated for the object itself.*/
 void destroyMaterial(Material *material);
+/*This function checks if a given Material object is valid. It returns an error code as follows:
+ * 1 if the name field is empty, 2 if the producer field is empty, 3 if the quantity field is negative,
+ * and 0 otherwise.*/
+int validateMaterial(Material *material);
 
-Material* copyMaterial(Material *material);
+Material *copyMaterial(Material *material);
+/*This function creates a new Material object by making a copy of an existing one.
+ * It uses the createMaterial function to allocate memory for the new object and initialize its fields with the same values as the original object.
+ * It then returns a pointer to the created object.*/
+void testCreateDestroy();
 
-// Preconditions: A "Material" object.
-// Parameters: The "Material" object that needs to be validated.
-// Postconditions: None.
-// Return: 1 if the name is empty, 2 if the producer is empty, 3 if the quantity is less than 0, and 0 otherwise.
-int validateMaterial(Material* material);
+void testCopy();
 
-void testCreateDestroyValidate();
+void testValidate();

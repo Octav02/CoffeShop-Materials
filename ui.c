@@ -1,158 +1,136 @@
+#include <stdio.h>
 #include "ui.h"
-#include "service.h"
-#include "stdio.h"
 
 void printMenu() {
-    printf("1.Add Material\n2.Update Material\n3.Delete\n4.Get Material\n5.Print All\n6.Get Material quantity\n7.Filter By Starting Letter\n8.Filter By Less Quantity\n9.Sort By Name\n10.Sort By Quantity\n0.Exit\n");
+    printf("1.Add\n2.Update\n3.Delete\n4.PrintAll\n5.PrintFilterLessQt\n6.PrintFilterStartingLetter\n7.PrintAllQuantityName\n8.SortByName\n9.SortByQuantity\n10.Undo\n0.Exit\n");
 }
 
-void addMaterialUI(CoffeeShop* coffeeShop) {
-    char name[30], producer[30];
+void printList(List* list) {
+    if (size(list) == 0) {
+        printf("There are no elements in the list \n");
+        return;
+    }
+    for (int i = 0; i < size(list); i++) {
+        Material * material = get(list,i);
+        printf("Material %d : Name %s | Producer %s | Quantity %d \n", i + 1,material->name,material->producer,material->quantity);
+    }
+}
+
+void printMaterialList(CoffeeShop* coffeeShop) {
+    printList(coffeeShop->materialList);
+}
+
+void addMaterialUI(CoffeeShop* coffeeShop){
+    char name[50], producer[50];
+    int quantity = 0;
     name[0] = '\0';
     producer[0] = '\0';
-    int quantity = 1;
     printf("Name : ");
     scanf("%s", name);
     printf("Producer : ");
     scanf("%s", producer);
     printf("Quantity : ");
-    scanf_s("%d", &quantity);
-
-    int res = addMaterial(coffeeShop, name, producer, quantity);
+    scanf("%d", &quantity);
+    int res = addMaterial(coffeeShop,name,producer,quantity);
     if (res != 0)
-        printf("There was an error\n");
+        printf("There was an error ! \n");
     else
-        printf("Element added successfully\n");
-
+        printf("Operation succeeded ! \n");
 }
 
 void updateMaterialUI(CoffeeShop* coffeeShop) {
-    char newName[30], newProducer[30];
-    newName[0] = '\0';
-    newProducer[0] = '\0';
-    int newQuantity = 0, pos = 0;
-    printListUI(coffeeShop->materialList);
+    printMaterialList(coffeeShop);
+    char name[50], producer[50];
+    int quantity = 0, pos = 0;
+    name[0] = '\0';
+    producer[0] = '\0';
     printf("Position : ");
-    scanf_s("%d", &pos);
-    printf("New Name : ");
-    scanf("%s", newName);
-    printf("New Producer : ");
-    scanf("%s", newProducer);
-    printf("New Quantity : ");
-    scanf_s("%d", &newQuantity);
-
-    int res = updateMaterial(coffeeShop, pos, newName, newProducer, newQuantity);
+    scanf("%d", &pos);
+    printf("Name : ");
+    scanf("%s", name);
+    printf("Producer : ");
+    scanf("%s", producer);
+    printf("Quantity : ");
+    scanf("%d", &quantity);
+    int res = updateMaterial(coffeeShop,pos - 1,name,producer,quantity);
     if (res != 0)
-        printf("There was an error %d\n", res);
+        printf("There was an error ! \n");
     else
-        printf("Element added successfully\n");
-
+        printf("Operation succeeded ! \n");
 }
 
 void removeMaterialUI(CoffeeShop* coffeeShop) {
     int pos = 0;
-    printListUI(coffeeShop->materialList);
     printf("Position : ");
-    scanf_s("%d", &pos);
-    int res = deleteMaterial(coffeeShop, pos);
+    scanf("%d", &pos);
+    int res = removeMaterial(coffeeShop,pos - 1);
     if (res != 0)
-        printf("There was an error\n");
+        printf("There was an error ! \n");
     else
-        printf("Element added successfully\n");
-
+        printf("Operation succeeded ! \n");
 }
 
-void getMaterialUI(CoffeeShop* coffeeShop) {
-    char name[30], producer[30];
-    name[0] = '\0';
-    producer[0] = '\0';
-    printf("Name : ");
-    scanf("%s", name);
-    printf("Producer : ");
-    scanf("%s", producer);
-    Material * material = getMaterial(coffeeShop->materialList, name, producer);
-    if (material->quantity == -1)
-        printf("The searched material does not exist\n");
-    else
-        printf("Searched Material: Name  %s | Producer  %s | Quantity  %d\n", material->name, material->producer,
-               material->quantity);
-}
-
-void printListUI(List *list) {
-
-    if (sizeOfMaterialList(list) != 0) {
-        for (int i = 0; i < sizeOfMaterialList(list); i++) {
-            Material * material = list->elements[i];
-            printf("Material %d: Name  %s | Producer  %s | Quantity  %d", i + 1, material->name,
-                   material->producer, material->quantity);
-        }
-        printf("\n");
-    } else {
-        printf("There are no materials in the list\n");
-    }
-}
-
-void getMaterialByNameUI(CoffeeShop* coffeeShop) {
-    char name[30];
-    name[0] = '\0';
-    printf("Name : ");
-    scanf("%s", name);
-    int qt = getAllMaterialsByName(coffeeShop->materialList, name);
-    printf("The selected material has a quantity of %d\n", qt);
-}
-
-void filterByStartingLetterUI(CoffeeShop* coffeeShop) {
-    char letter;
-    printf("Letter :");
-    scanf("%c", &letter);
-    List *filterResult = getMaterialsWithStartingLetter(coffeeShop->materialList,letter);
-    printListUI(filterResult);
-    destroyList(filterResult);
-}
-
-void filterByLessQuantityUI(CoffeeShop* coffeeShop) {
+void filterLessQuantityUI(CoffeeShop* coffeeShop) {
     int quantity = 0;
+    printMaterialList(coffeeShop);
     printf("Quantity : ");
     scanf("%d", &quantity);
-    List* filterResult = getMaterialsWithLessQuantity(coffeeShop->materialList, quantity);
-    printListUI(filterResult);
+    List * filterResult = getMaterialsWithLessQuantity(coffeeShop, quantity);
+    printList(filterResult);
     destroyList(filterResult);
+}
+
+void filterStartingLetterUI(CoffeeShop* coffeeShop) {
+    char letter = '\0';
+    printf("Letter : ");
+    scanf("%c", &letter);
+    List *filterResult = getAllMaterialsWithStartingLetter(coffeeShop, letter);
+    printList(filterResult);
+    destroyList(filterResult);
+}
+
+void printAllQuantityNameUI(CoffeeShop* coffeeShop) {
+    char name[50];
+    name[0] = '\0';
+    printf("Name : ");
+    scanf("%s", name);
+    int res = getAllMaterialsByName(coffeeShop,name);
+    printf("The quantity for the selected material is : %d \n", res);
 }
 
 void undoUI(CoffeeShop* coffeeShop) {
     int res = undo(coffeeShop);
-    if (res == 1)
-        printf("There was an error\n");
+    if (res != 0)
+        printf("There was an error ! \n");
     else
-        printf("Undo success\n");
+        printf("Operation succeeded ! \n");
 }
 
 void sortByNameUI(CoffeeShop* coffeeShop) {
     int order = 0;
-    printf("Order (0-descending 1-ascending) : ");
-    scanf("%d", &order);
-    List* filterResult = getMaterialsOrderedByName(coffeeShop->materialList, order);
-    printListUI(filterResult);
-    destroyList(filterResult);
+    printf("Order : (0-Ascending 1-Descending) : ");
+    scanf("%d",&order);
+    List * sortResult = sortByName(coffeeShop,order);
+    printList(sortResult);
+    destroyList(sortResult);
 }
 
-void sortByQuantityUI(CoffeeShop* coffeeShop) {
+void sortByQuantityUI(CoffeeShop * coffeeShop) {
     int order = 0;
-    printf("Order (0-descending 1-ascending) : ");
-    scanf("%d", &order);
-    List* filterResult = getMaterialsOrderedByQuantity(coffeeShop->materialList, order);
-    printListUI(filterResult);
-    destroyList(filterResult);
+    printf("Order : (0-Ascending 1-Descending) : ");
+    scanf("%d",&order);
+    List * sortResult = sortByQuantity(coffeeShop,order);
+    printList(sortResult);
+    destroyList(sortResult);
 }
 
 void runUI(CoffeeShop* coffeeShop) {
     int running = 1;
     while (running) {
-
         printMenu();
-        int cmd = 0;
-        printf("Introdu Comanda : ");
-        scanf_s("%d", &cmd);
+        int cmd;
+        printf("Choose option : ");
+        scanf("%d", &cmd);
         switch (cmd) {
             case 1: {
                 addMaterialUI(coffeeShop);
@@ -167,42 +145,38 @@ void runUI(CoffeeShop* coffeeShop) {
                 break;
             }
             case 4: {
-                getMaterialUI(coffeeShop);
+                printMaterialList(coffeeShop);
                 break;
             }
             case 5: {
-                printListUI(coffeeShop->materialList);
+                filterLessQuantityUI(coffeeShop);
                 break;
             }
             case 6: {
-                getMaterialByNameUI(coffeeShop);
+                filterStartingLetterUI(coffeeShop);
                 break;
             }
             case 7: {
-                filterByStartingLetterUI(coffeeShop);
+                printAllQuantityNameUI(coffeeShop);
                 break;
             }
             case 8: {
-                filterByLessQuantityUI(coffeeShop);
-                break;
-            }
-            case 9: {
                 sortByNameUI(coffeeShop);
                 break;
             }
-            case 10: {
+            case 9: {
                 sortByQuantityUI(coffeeShop);
                 break;
             }
-            case 11: {
+            case 10: {
                 undoUI(coffeeShop);
                 break;
             }
             case 0: {
-                destroyList(coffeeShop->materialList);
-                destroyList(coffeeShop->undoList);
-                printf("Bye !\n");
+                printf("Bye !");
+                destroyCoffeeShop(coffeeShop);
                 running = 0;
+                break;
             }
             default: {
                 continue;

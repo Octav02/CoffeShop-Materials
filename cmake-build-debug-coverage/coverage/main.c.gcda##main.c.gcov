@@ -1,48 +1,45 @@
-        -:    0:Source:D:/Facultate/OOP/CoffeShop-Materials1/main.c
-        -:    0:Graph:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\main.c.gcno
-        -:    0:Data:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\main.c.gcda
+        -:    0:Source:/home/octav/CLionProjects/CoffeeShopMaterials/main.c
+        -:    0:Graph:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/main.c.gcno
+        -:    0:Data:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/main.c.gcda
         -:    0:Runs:1
-        -:    1:#include "material.h"
-        -:    2:#include "list.h"
-        -:    3:#include "service.h"
-        -:    4:#include "ui.h"
-        -:    5:#include <stdio.h>
-        -:    6:#include <crtdbg.h>
-        -:    7:
-        -:    8:void runAllTests();
-        -:    9:
+        -:    1:#include <stdio.h>
+        -:    2:#include "ui.h"
+        -:    3:
+        -:    4:void runAllTests();
+        -:    5:
 function main called 1 returned 100% blocks executed 100%
-        1:   10:int main() {
-        1:   11:    CoffeeShop coffeeShop = createCoffeeShop();
-        1:   11-block  0
+        1:    6:int main() {
+        1:    7:    runAllTests();
+        1:    7-block  0
 call    0 returned 1
-        1:   12:    runAllTests();
-call    0 returned 1
-        1:   13:    runUI(&coffeeShop);
-call    0 returned 1
-        -:   14:    _CrtDumpMemoryLeaks();
-        1:   15:    return 0;
-        -:   16:}
-        -:   17:
+        -:    8://    CoffeeShop coffeeShop = createCoffeeShop();
+        -:    9://    runUI(&coffeeShop);
+        1:   10:    return 0;
+        -:   11:}
+        -:   12:
 function runAllTests called 1 returned 100% blocks executed 100%
-        1:   18:void runAllTests() {
-        1:   19:    testCRUD();
-        1:   19-block  0
+        1:   13:void runAllTests() {
+        1:   14:    testCreateDestroy();
+        1:   14-block  0
 call    0 returned 1
-        1:   20:    testCreateDestroyValidate();
+        1:   15:    testCopy();
 call    0 returned 1
-        1:   21:    testCreateList();
+        1:   16:    testValidate();
 call    0 returned 1
-        1:   22:    testListOfLists();
+        1:   17:    testCreateDestroyList();
 call    0 returned 1
-        1:   23:    testIterateList();
+        1:   18:    testCRUDList();
 call    0 returned 1
-        1:   24:    testCopyList();
+        1:   19:    testCopyList();
 call    0 returned 1
-        1:   25:    testUndo();
+        1:   20:    testCreateCoffeeShop();
 call    0 returned 1
-        1:   26:    testFiltering();
+        1:   21:    testCRUDService();
 call    0 returned 1
-        1:   27:    testEnsureCapacity();
+        1:   22:    testUndo();
 call    0 returned 1
-        1:   28:}
+        1:   23:    testFiltering();
+call    0 returned 1
+        1:   24:    testSorting();
+call    0 returned 1
+        1:   25:}

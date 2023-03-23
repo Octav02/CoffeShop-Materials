@@ -1,0 +1,41 @@
+        -:    0:Source:/home/octav/CLionProjects/CoffeeShopMaterials/sorting.c
+        -:    0:Graph:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/sorting.c.gcno
+        -:    0:Data:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/sorting.c.gcda
+        -:    0:Runs:1
+        -:    1:#include "sorting.h"
+        -:    2:
+        -:    3:
+function sort called 4 returned 100% blocks executed 100%
+        4:    4:void sort(List *list, CompareFunction f) {
+       12:    5:    for (int i = 0; i < size(list) - 1; i++) {
+        4:    5-block  0
+        8:    5-block  1
+       12:    5-block  2
+call    0 returned 12
+branch  1 taken 8
+branch  2 taken 4 (fallthrough)
+       20:    6:        for (int j = i + 1; j < size(list); j++) {
+        8:    6-block  0
+       12:    6-block  1
+       20:    6-block  2
+call    0 returned 20
+branch  1 taken 12
+branch  2 taken 8 (fallthrough)
+       12:    7:            void *obj1 = get(list, i);
+       12:    7-block  0
+call    0 returned 12
+       12:    8:            void *obj2 = get(list, j);
+call    0 returned 12
+       12:    9:            if (f(obj1,obj2) > 0) {
+call    0 returned 12
+branch  1 taken 6 (fallthrough)
+branch  2 taken 6
+        6:   10:                update(list, i, obj2);
+        6:   10-block  0
+call    0 returned 6
+        6:   11:                update(list, j, obj1);
+call    0 returned 6
+        -:   12:            }
+        -:   13:        }
+        -:   14:    }
+        4:   15:}

@@ -1,262 +1,243 @@
 #include "service.h"
-#include <assert.h>
+#include "sorting.h"
 #include <string.h>
-#include <stdio.h>
-
-
-int addMaterial(CoffeeShop *coffeeShop, char *name, char *producer, int quantity) {
-    Material *material = createMaterial(name, producer, quantity);
-    int errors = validateMaterial(material);
-    if (errors != 0)
-        return errors;
-    for (int i = 0; i < coffeeShop->materialList->length; i++) {
-        Material *material1 = coffeeShop->materialList->elements[i];
-        if (!strcmp(material1->name, name) && !strcmp(material1->producer, producer)) {
-            material1->quantity += quantity;
-            coffeeShop->materialList->elements[i] = material1;
-            List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-            addElementToList(coffeeShop->undoList, toUndo);
-            return 0;
-        }
-    }
-    List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-    addElementToList(coffeeShop->undoList, toUndo);
-    addElementToList(coffeeShop->materialList, material);
-    return 0;
-
-}
-
-int updateMaterial(CoffeeShop *coffeeShop, int pos, char *newName, char *newProducer, int quantity) {
-    Material *material = createMaterial(newName, newProducer, quantity);
-    int errors = validateMaterial(material);
-    if (errors != 0)
-        return errors;
-    pos -= 1;
-    List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-    addElementToList(coffeeShop->undoList, toUndo);
-    updateElementFromList(coffeeShop->materialList, pos, material);
-    return 0;
-}
-
-Material *getMaterial(List *list, char *name, char *producer) {
-    Material *WantedMaterial = createMaterial("", "", -1);
-    for (int i = 0; i < sizeOfList(list); i++) {
-        Material *currentMaterial = getElement(list, i);
-        if (!strcmp(currentMaterial->name, name) && !strcmp(currentMaterial->producer, producer)) {
-            strcpy(WantedMaterial->name, currentMaterial->name);
-            strcpy(WantedMaterial->producer, currentMaterial->producer);
-            WantedMaterial->quantity = currentMaterial->quantity;
-        }
-    }
-    return WantedMaterial;
-}
-//
-
-int undo(CoffeeShop *coffeeShop) {
-    if (sizeOfList(coffeeShop->undoList) == 0)
-        return 1;
-    List *l = coffeeShop->undoList->elements[sizeOfList(coffeeShop->undoList) - 1];
-    deleteElementFromList(coffeeShop->undoList, sizeOfList(coffeeShop->undoList) - 1);
-    destroyList(coffeeShop->materialList);
-    coffeeShop->materialList = l;
-    return 0;
-}
-
-int deleteMaterial(CoffeeShop *coffeeShop, int pos) {
-    pos -= 1;
-    List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-    addElementToList(coffeeShop->undoList, toUndo);
-    deleteElementFromList(coffeeShop->materialList, pos);
-    return 0;
-}
-
-List *getAllMaterials(List *list) {
-    List *result = createCopyOfList(list, (copyFunction) createCopyOfList);
-    return result;
-}
-
-int sizeOfMaterialList(List *list) {
-    return sizeOfList(list);
-}
-
-
-int getAllMaterialsByName(List *list, char *name) {
-    int result = 0;
-    for (int i = 0; i < sizeOfList(list); i++) {
-        Material *material1 = list->elements[i];
-        if (!strcmp(material1->name, name))
-            result += material1->quantity;
-    }
-    return result;
-}
-
-//
-List *getMaterialsWithStartingLetter(List *list, char letter) {
-    List *result = createEmptyList((destroyFunction) destroyMaterial);
-    int len = sizeOfList(list);
-    for (int i = 0; i < len; i++) {
-        Material *material1 = list->elements[i];
-        if (material1->name[0] == letter)
-            addElementToList(result, material1);
-    }
-    return result;
-}
-
-List *getMaterialsWithLessQuantity(List *list, int quantity) {
-    List *result = createEmptyList((destroyFunction) destroyMaterial);
-    int len = sizeOfList(list);
-    for (int i = 0; i < len; i++) {
-        Material *material1 = list->elements[i];
-        if (material1->quantity < quantity)
-            addElementToList(result, getElement(list, i));
-    }
-    return result;
-}
-
-List *getMaterialsOrderedByQuantity(List *list, int order) {
-    List *result = createCopyOfList(list, (copyFunction) copyMaterial);
-    int len = sizeOfList(result);
-    for (int i = 0; i < len - 1; i++) {
-        for (int j = i + 1; j < len; j++) {
-            Material *material1 = list->elements[i];
-            Material *material2 = list->elements[j];
-            if (order == 1) {
-                if (material1->quantity > material2->quantity) {
-                    ElemType aux = result->elements[i];
-                    result->elements[i] = result->elements[j];
-                    result->elements[j] = aux;
-                }
-            } else if (order == 0) {
-                if (material1->quantity < material2->quantity) {
-                    ElemType aux = result->elements[i];
-                    result->elements[i] = result->elements[j];
-                    result->elements[j] = aux;
-                }
-            } else {
-                return list;
-            }
-        }
-    }
-    return result;
-}
-
-List *getMaterialsOrderedByName(List *list, int order) {
-    List *result = createCopyOfList(list, (copyFunction) copyMaterial);
-    int len = sizeOfList(result);
-    for (int i = 0; i < len - 1; i++) {
-        for (int j = i + 1; j < len; j++) {
-            Material *material1 = list->elements[i];
-            Material *material2 = list->elements[j];
-            if (order == 1) {
-
-                if (strcmp(material1->name, material2->name) > 0) {
-                    ElemType aux = result->elements[i];
-                    result->elements[i] = result->elements[j];
-                    result->elements[j] = aux;
-                }
-            } else if (order == 0) {
-                if (strcmp(material1->name, material2->name) < 0) {
-                    ElemType aux = result->elements[i];
-                    result->elements[i] = result->elements[j];
-                    result->elements[j] = aux;
-                }
-            } else {
-                return list;
-            }
-        }
-    }
-    return result;
-}
+#include <assert.h>
 
 CoffeeShop createCoffeeShop() {
     CoffeeShop rez;
-    rez.materialList = createEmptyList((destroyFunction) destroyMaterial);
-    rez.undoList = createEmptyList((destroyFunction) destroyList);
+    rez.materialList = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+    rez.undoList = createEmptyList((DestroyFunction) destroyList, (CopyFunction) copyList);
     return rez;
 }
 
-void testCRUD() {
-    CoffeeShop coffeeShop = createCoffeeShop();
-    int res = addMaterial(&coffeeShop, "m1", "p1", 20);
-    assert(sizeOfMaterialList(coffeeShop.materialList) == 1);
-    assert(sizeOfList(coffeeShop.materialList) == 1);
-    assert(res == 0);
-    res = addMaterial(&coffeeShop, "", "p1", 30);
-    res = addMaterial(&coffeeShop, "m1", "p1", 30);
-    Material *material2 = getElement(coffeeShop.materialList, 0);
-    assert(material2->quantity == 50);
-    material2 = getMaterial(coffeeShop.materialList, "m1", "p1");
-    res = updateMaterial(&coffeeShop, 0, "m1", "m2", 20);
-    assert(res == 0);
-    res = updateMaterial(&coffeeShop, 0, "", "m2", 20);
-    res = addMaterial(&coffeeShop, "m1", "p2", 30);
-    assert(getAllMaterialsByName(coffeeShop.materialList, "m1") == 80);
-    deleteMaterial(&coffeeShop, 2);
-    assert(sizeOfList(coffeeShop.materialList) == 1);
+void destroyCoffeeShop(CoffeeShop *coffeeShop) {
+    destroyList(coffeeShop->materialList);
+    destroyList(coffeeShop->undoList);
+}
 
-    List *list2 = getAllMaterials(coffeeShop.materialList);
-    destroyList(list2);
+int addMaterial(CoffeeShop *coffeeShop, char *name, char *producer, int quantity) {
+    Material *material = createMaterial(name, producer, quantity);
+    int res = validateMaterial(material);
+    if (res != 0) {
+        destroyMaterial(material);
+        return res;
+    }
+    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+        Material *current = get(coffeeShop->materialList, i);
+        if (!strcmp(current->name, name) && !strcmp(current->producer, producer)) {
+            List *toUndo = copyList(coffeeShop->materialList);
+            current->quantity += quantity;
+            add(coffeeShop->undoList, toUndo);
+            destroyMaterial(material);
+            return 0;
+        }
+    }
+    List *toUndo = copyList(coffeeShop->materialList);
+    add(coffeeShop->materialList, material);
+    add(coffeeShop->undoList, toUndo);
+
+    return 0;
+}
+
+int updateMaterial(CoffeeShop *coffeeShop, int pos, char *name, char *producer, int quantity) {
+    Material *material = createMaterial(name, producer, quantity);
+    if (pos >= coffeeShop->materialList->length || pos < 0) {
+        destroyMaterial(material);
+        return -1;
+    }
+    int res = validateMaterial(material);
+    if (res != 0) {
+        destroyMaterial(material);
+        return res;
+    }
+    List *toUndo = copyList(coffeeShop->materialList);
+    destroyMaterial(coffeeShop->materialList->elements[pos]);
+    res = update(coffeeShop->materialList, pos, material);
+    add(coffeeShop->undoList, toUndo);
+    return res;
+}
+
+int removeMaterial(CoffeeShop *coffeeShop, int pos) {
+    if (pos >= coffeeShop->materialList->length || pos < 0) {
+        return -1;
+    }
+    List *toUndo = copyList(coffeeShop->materialList);
+
+    int res = removeElement(coffeeShop->materialList,pos);
+    add(coffeeShop->undoList, toUndo);
+    return res;
+}
+
+Material *getMaterial(CoffeeShop *coffeeShop, int pos) {
+    Material * res = get(coffeeShop->materialList, pos);
+    return res;
+}
+
+int undo(CoffeeShop *coffeeShop) {
+    if (size(coffeeShop->undoList) <= 0)
+        return 1;
+    List *modified = get(coffeeShop->undoList,size(coffeeShop->undoList) - 1);
+    coffeeShop ->undoList->length -= 1;
+    destroyList(coffeeShop->materialList);
+    coffeeShop->materialList = modified;
+    return 0;
+}
+
+int sizeOfMaterialList(CoffeeShop *coffeeShop) {
+    return size(coffeeShop->materialList);
+}
+
+int getAllMaterialsByName(CoffeeShop *coffeeShop, char *name) {
+    int res = 0;
+    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+        Material * current = get(coffeeShop->materialList,i);
+        if (!strcmp(current->name, name))
+            res += current->quantity;
+    }
+    return res;
+}
+
+List *getAllMaterials(CoffeeShop *coffeeShop) {
+    return coffeeShop->materialList;
+}
+
+List *getAllMaterialsWithStartingLetter(CoffeeShop *coffeeShop, char letter) {
+    List* res = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+        Material * current = get(coffeeShop->materialList, i);
+        if (current->name[0] == letter)
+            add(res,res->copyElement(current));
+    }
+    return res;
+}
+
+List *getMaterialsWithLessQuantity(CoffeeShop *coffeeShop, int quantity) {
+    List* res = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+        Material * current = get(coffeeShop->materialList, i);
+        if (current->quantity < quantity)
+            add(res,res->copyElement(current));
+    }
+    return res;
+}
+
+int cmpNameAsc(Material* m1, Material* m2) {
+    return strcmp(m1->name, m2->name);
+}
+
+int cmpNameDesc(Material* m1, Material* m2) {
+    return strcmp(m2->name, m1->name);
+}
+
+int cmpQuantityAsc(Material* m1, Material* m2) {
+    return m1->quantity > m2->quantity;
+}
+
+int cmpQuantityDesc(Material* m1, Material* m2) {
+    return  m1->quantity < m2->quantity;
+}
+
+List *sortByQuantity(CoffeeShop *coffeeShop, int order) {
+    List* list = copyList(coffeeShop->materialList);
+    if(order == 0)
+        sort(list, (CompareFunction) cmpQuantityAsc);
+    else
+        sort(list, (CompareFunction) cmpQuantityDesc);
+    return list;
+}
+
+List *sortByName(CoffeeShop *coffeeShop, int order) {
+    List* list = copyList(coffeeShop->materialList);
+    if (order == 0) {
+        sort(list, (CompareFunction) cmpNameAsc);
+    } else
+        sort(list, (CompareFunction) cmpNameDesc);
+    return list;
+}
+
+void testCreateCoffeeShop() {
+    CoffeeShop  coffeeShop = createCoffeeShop();
+    destroyCoffeeShop(&coffeeShop);
+}
+void testCRUDService() {
+    CoffeeShop  coffeeShop = createCoffeeShop();
+    addMaterial(&coffeeShop,"1","1",1);
+    addMaterial(&coffeeShop,"2","2",2);
+    addMaterial(&coffeeShop,"2","2",-4);
+    assert(sizeOfMaterialList(&coffeeShop) == 2);
+    addMaterial(&coffeeShop,"1","1",2);
+    Material *material = getMaterial(&coffeeShop, 0);
+    assert(material->quantity == 3);
+
+    updateMaterial(&coffeeShop,0,"4","5",20);
+    material = getMaterial(&coffeeShop, 0);
+    assert(material->quantity == 20);
+    updateMaterial(&coffeeShop,0,"","5",20);
+    updateMaterial(&coffeeShop,60,"2","2",3);
+
+    removeMaterial(&coffeeShop,30);
+    removeMaterial(&coffeeShop, 1);
+    assert(sizeOfMaterialList(&coffeeShop) == 1);
+    List* all = getAllMaterials(&coffeeShop);
+    assert(size(all) == 1);
+    destroyCoffeeShop(&coffeeShop);
 
 }
 
 void testUndo() {
-    CoffeeShop coffeeShop = createCoffeeShop();
-    int res = addMaterial(&coffeeShop, "m1", "p1", 20);
-    assert(sizeOfList(coffeeShop.materialList) == 1);
-    assert(sizeOfList(coffeeShop.undoList) == 1);
-    res = undo(&coffeeShop);
-    assert(res == 0);
-    assert(sizeOfList(coffeeShop.materialList) == 0);
-    res = undo(&coffeeShop);
+    CoffeeShop  coffeeShop = createCoffeeShop();
+    undo(&coffeeShop);
+    addMaterial(&coffeeShop,"1","1",1);
+    addMaterial(&coffeeShop,"2","2",2);
+    assert(sizeOfMaterialList(&coffeeShop) == 2);
+    undo(&coffeeShop);
+    assert(sizeOfMaterialList(&coffeeShop) == 1);
+    removeMaterial(&coffeeShop,0);
+    assert(sizeOfMaterialList(&coffeeShop) == 0);
+    undo(&coffeeShop);
+    assert(sizeOfMaterialList(&coffeeShop) == 1);
+    destroyCoffeeShop(&coffeeShop);
 }
 
 void testFiltering() {
-    CoffeeShop coffeeShop = createCoffeeShop();
+    CoffeeShop  coffeeShop = createCoffeeShop();
+    addMaterial(&coffeeShop,"1","1",1);
+    addMaterial(&coffeeShop,"2","2",2);
+    addMaterial(&coffeeShop,"1","3",4);
+    addMaterial(&coffeeShop,"13","3",4);
+    int res1 = getAllMaterialsByName(&coffeeShop,"1");
+    assert(res1 == 5);
+    List* filterResult = getAllMaterialsWithStartingLetter(&coffeeShop, '1');
+    assert(size(filterResult) == 3);
+    destroyList(filterResult);
+    filterResult = getMaterialsWithLessQuantity(&coffeeShop, 3);
+    assert(size(filterResult) == 2);
+    destroyList(filterResult);
+    destroyCoffeeShop(&coffeeShop);
 
-    addMaterial(&coffeeShop, "dan", "o2", 4);
-    addMaterial(&coffeeShop, "rob", "ewq", 5);
-    addMaterial(&coffeeShop, "d", "titan", 2);
-    assert(sizeOfMaterialList(coffeeShop.materialList) == 3);
-    List *filterResult = getMaterialsWithStartingLetter(coffeeShop.materialList, 'd');
-    Material *material1 = getElement(filterResult, 0);
-    Material *material2 = getElement(filterResult, 1);
-    assert(material1->quantity == 4);
-    assert(material2->quantity == 2);
+}
 
-    filterResult = getMaterialsWithLessQuantity(coffeeShop.materialList, 5);
-    assert(sizeOfMaterialList(filterResult) == 2);
-    material1 = getElement(filterResult, 0);
-    material2 = getElement(filterResult, 1);
-    assert(material1->quantity == 4);
-    assert(material2->quantity == 2);
-    filterResult = getMaterialsOrderedByQuantity(coffeeShop.materialList, 1);
-    material1 = getElement(filterResult, 0);
-    assert(material1->quantity == 2);
-    assert(sizeOfMaterialList(filterResult) == 3);
+void testSorting() {
+    CoffeeShop  coffeeShop = createCoffeeShop();
+    addMaterial(&coffeeShop, "a","1",3);
+    addMaterial(&coffeeShop, "c","2",2);
+    addMaterial(&coffeeShop, "b","5",1);
+    List * sortResult = sortByName(&coffeeShop,0);
+    Material *material = get(sortResult, 1);
+    assert(material->quantity == 1);
+    destroyList(sortResult);
+    sortResult = sortByName(&coffeeShop,1);
+    material = get(sortResult,0);
+    assert(material->quantity == 2);
+    destroyList(sortResult);
+    sortResult = sortByQuantity(&coffeeShop,0);
+    material = get(sortResult,0);
+    assert(material->quantity == 1);
+    destroyList(sortResult);
 
-    filterResult = getMaterialsOrderedByQuantity(coffeeShop.materialList, 0);
-    material1 = getElement(filterResult, 0);
-    assert(material1->quantity == 5);
-    assert(sizeOfMaterialList(filterResult) == 3);
-//
-    filterResult = getMaterialsOrderedByQuantity(coffeeShop.materialList, 6);
-    material1 = getElement(filterResult, 0);
-    assert(material1->quantity == 4);
-    assert(sizeOfMaterialList(filterResult) == 3);
-//
-    filterResult = getMaterialsOrderedByName(coffeeShop.materialList, 1);
-    material1 = getElement(filterResult, 0);
-    assert(material1->quantity == 2);
-    assert(sizeOfMaterialList(filterResult) == 3);
-//
-    filterResult = getMaterialsOrderedByName(coffeeShop.materialList, 0);
-    material1 = getElement(filterResult, 0);
-    assert(material1->quantity == 5);
-    assert(sizeOfMaterialList(filterResult) == 3);
-//
-    filterResult = getMaterialsOrderedByName(coffeeShop.materialList, 6);
-    material1 = getElement(filterResult, 0);
-    assert(material1->quantity == 4);
-    assert(sizeOfMaterialList(filterResult) == 3);
-
+    sortResult = sortByQuantity(&coffeeShop,1);
+    material = get(sortResult,0);
+    assert(material->quantity == 3);
+    destroyList(sortResult);
+    destroyCoffeeShop(&coffeeShop);
 }

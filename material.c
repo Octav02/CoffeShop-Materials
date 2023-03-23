@@ -1,30 +1,30 @@
 #include "material.h"
+
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
-Material* createMaterial(char *name, char *producer, int quantity) {
+
+Material *createMaterial(char *name, char *producer, int quantity) {
     Material *rez = malloc(sizeof(Material));
-    size_t len = strlen(name) + 1;
-    rez->name = malloc(sizeof(char) * len);
-    strcpy_s(rez->name, len, name);
-    len = strlen(producer) + 1;
-    rez->producer = malloc(sizeof(char) * len);
-    strcpy_s(rez->producer, len, producer);
+    size_t nrC = strlen(name) + 1;
+    if (nrC == 1) nrC = 2;
+    rez->name = malloc(sizeof(char) * nrC);
+    strcpy(rez->name, name);
+    nrC = strlen(producer) + 1;
+    if (nrC == 1) nrC = 2;
+    rez->producer = malloc(sizeof(char) * nrC);
+    strcpy(rez->producer, producer);
     rez->quantity = quantity;
     return rez;
 }
 
 void destroyMaterial(Material *material) {
-    free(material -> name);
-    free(material -> producer);
+    free(material->producer);
+    free(material->name);
     free(material);
 }
 
-Material* copyMaterial(Material *material) {
-    return createMaterial(material->name, material->producer, material->quantity);
-}
-
-int validateMaterial(Material* material) {
+int validateMaterial(Material *material) {
     if (strlen(material->name) == 0)
         return 1;
     if (strlen(material->producer) == 0)
@@ -34,26 +34,46 @@ int validateMaterial(Material* material) {
     return 0;
 }
 
-void testCreateDestroyValidate() {
-    Material* material = createMaterial("Arabica", "P1", 1000);
-    assert(!strcmp(material->name, "Arabica"));
-    assert(!strcmp(material->producer, "P1"));
-    assert(material->quantity == 1000);
-    Material* copMaterial = copyMaterial(material);
-    assert(!strcmp(copMaterial->name, "Arabica"));
-    assert(!strcmp(copMaterial->producer, "P1"));
-    assert(copMaterial->quantity == 1000);
+
+Material *copyMaterial(Material *material) {
+    Material *rez = createMaterial(material->name, material->producer, material->quantity);
+    return rez;
+}
+
+void testCreateDestroy() {
+    Material *material = createMaterial("Name", "Producer", 10);
+    assert(material != NULL);
+    assert(strcmp(material->name, "Name") == 0);
+    assert(strcmp(material->producer, "Producer") == 0);
+    assert(material->quantity == 10);
+    destroyMaterial(material);
+}
+
+void testCopy() {
+    Material *material = createMaterial("Name", "Producer", 10);
+    Material *copy = copyMaterial(material);
+    assert(copy != NULL);
+    assert(strcmp(copy->name, "Name") == 0);
+    assert(strcmp(copy->producer, "Producer") == 0);
+    assert(copy->quantity == 10);
+    destroyMaterial(material);
+    destroyMaterial(copy);
+}
+
+void testValidate() {
+    Material *material = createMaterial("", "Producer", 10);
+    assert(validateMaterial(material) == 1);
+    destroyMaterial(material);
+
+    material = createMaterial("Name", "", 10);
+    assert(validateMaterial(material) == 2);
+    destroyMaterial(material);
+
+    material = createMaterial("Name", "Producer", -1);
+    assert(validateMaterial(material) == 3);
+    destroyMaterial(material);
+
+    material = createMaterial("Name", "Producer", 10);
     assert(validateMaterial(material) == 0);
     destroyMaterial(material);
-    destroyMaterial(copMaterial);
-
-    material = createMaterial("","Da",32);
-    assert(validateMaterial(material) == 1);
-    Material *material1 = createMaterial("Africana", "", 1000);
-    assert(validateMaterial(material1) == 2);
-    Material* material2 = createMaterial("Robusta", "P2", -40);
-    assert(validateMaterial(material2) == 3);
-    destroyMaterial(material1);
-    destroyMaterial(material2);
-
 }

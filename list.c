@@ -1,131 +1,131 @@
 #include "list.h"
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
-List* createEmptyList(destroyFunction f) {
+#include <assert.h>
+#include <stdlib.h>
+/* This function creates a new empty List object by dynamically allocating memory for it and initializes its fields
+ * length, capacity, elements, deleteElement, and copyElement
+ * with the values provided as arguments. It returns a pointer to the created object.*/
+List *createEmptyList(DestroyFunction f1, CopyFunction f2) {
     List *rez = malloc(sizeof(List));
+    rez->length = 0;
     rez->capacity = 2;
     rez->elements = malloc(sizeof(ElemType) * rez->capacity);
-    rez->length = 0;
-    rez->deleteElement = f;
+    rez->deleteElement = f1;
+    rez->copyElement = f2;
     return rez;
 }
-
+/*This function deallocates the memory that was dynamically allocated for a given List object.
+ * It first calls the deleteElement function on each element of the list to
+ * deallocate any dynamically allocated memory for those elements.
+ * It then frees the memory allocated for the elements field,
+ * and finally frees the memory allocated for the object itself.*/
 void destroyList(List *list) {
-    for (int i = 0; i < sizeOfList(list); i++)
-        list -> deleteElement(list->elements[i]);
+    for (int i = 0; i < list->length; i++)
+        list->deleteElement(list->elements[i]);
     free(list->elements);
     free(list);
 }
-
-ElemType getElement(List *list, int pos) {
+/*This function returns the element of a List object at a given position,
+ * specified by the pos argument.*/
+ElemType get(List *list, int pos) {
     return list->elements[pos];
 }
-
-
-int sizeOfList(List *list) {
+int size(List *list) {
     return list->length;
 }
 
 void ensureCapacity(List *list) {
-    if (list->length < list->capacity)
-        return;
-    int newCapacity = list->capacity + 2;
-    ElemType *newElements = malloc(sizeof(ElemType) * newCapacity);
-
-    for (int i = 0; i < list->length; i++)
+    if (list->length < list->capacity) {
+        return; //we have room
+    }
+    ElemType *newElements = malloc(sizeof(ElemType) * (list->capacity + 2));
+    for (int i = 0; i < list->length; i++) {
         newElements[i] = list->elements[i];
+    }
+    free(list->elements);
+    list->elements = newElements;
+    list->capacity += 2;
+}
+
+void add(List *list, ElemType element) {
+    ensureCapacity(list);
+    list->elements[list->length++] = element;
+}
+
+int update(List *list, int pos, ElemType element) {
+    if (pos >= list->length || pos < 0)
+        return -1;
+    list->elements[pos] = element;
+    return 0;
+}
+
+int removeElement(List *list, int pos) {
+    if (pos >= list->length || pos < 0)
+        return -1;
+    ElemType *newElements = malloc(sizeof(ElemType) * (list->capacity + 2));
+    int k = 0;
+    for (int i = 0; i < list->length; i++) {
+        if (i != pos)
+            newElements[k++] = list->elements[i];
+        else
+            list->deleteElement(list->elements[i]);
+    }
 
     free(list->elements);
     list->elements = newElements;
-    list->capacity = newCapacity;
+    list->length -= 1;
+    return 0;
 }
 
-void addElementToList(List *list, ElemType element) {
-    ensureCapacity(list);
-    list->elements[list->length] = element;
-    list->length++;
-}
-
-void deleteElementFromList(List *list, int index) {
-    for (int i = index; i < sizeOfList(list) - 1; i++)
-        list->elements[i] = list->elements[i + 1];
-    list->length--;
-}
-
-void updateElementFromList(List *list, int index, ElemType updatedElement) {
-    list->elements[index] = updatedElement;
-}
-
-
-List* createCopyOfList(List *list, copyFunction f) {
-    List* copyList = createEmptyList(list->deleteElement);
-    for (int i = 0; i < sizeOfList(list); i++) {
-        ElemType current = getElement(list, i);
-        addElementToList(copyList, current);
+List *copyList(List *list) {
+    List *rez = createEmptyList(list->deleteElement, list->copyElement);
+    for (int i = 0; i < size(list); i++) {
+        ElemType current = get(list, i);
+        add(rez, rez->copyElement(current));
     }
-    return copyList;
+    return rez;
 }
 
-void testCreateList() {
-    List * list = createEmptyList((destroyFunction) destroyMaterial);
-    assert(sizeOfList(list) == 0);
-    destroyList(list);
+void testCreateDestroyList() {
+    List *list1 = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+    assert(list1->length == 0);
+    assert(list1->capacity == 2);
+    destroyList(list1);
 }
 
-void testIterateList() {
-    List* list = createEmptyList((destroyFunction) destroyMaterial);
-    Material* material = createMaterial("n1", "p1", 20);
-    Material* material1 = createMaterial("n2", "p2", 40);
-    addElementToList(list, material);
-    Material* material2 = getElement(list, 0);
-    assert(material2->quantity == 20);
-
-    addElementToList(list, material1);
-    int length = sizeOfList(list);
-    assert(length == 2);
-    updateElementFromList(list, 0, createMaterial("n2", "p2", 40));
-    material2 = getElement(list, 0);
-    assert(material2->quantity == 40);
-    deleteElementFromList(list, 1);
-    length = sizeOfList(list);
-    assert(length == 1);
-    length = sizeOfList(list);
-    assert(length == 1);
-    Material *elem = getElement(list, 1);
-    assert(elem->quantity == 40);
+void testCRUDList() {
+    Material *material1 = createMaterial("da", "nu", 1);
+    Material *material2 = createMaterial("2", "2", 2);
+    Material *material3 = createMaterial("1", "1", 1);
+    List *list = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+    ensureCapacity(list);
+    add(list, material1);
+    add(list, material2);
+    assert(size(list) == 2);
+    ensureCapacity(list);
+    Material *material4 = get(list, 0);
+    assert(material4 == material1);
+    int res = update(list, 6, material4);
+    assert(res == -1);
+    res = removeElement(list, 6);
+    assert(res == -1);
+    res = update(list, 0, material3);
+    assert(res == 0);
+    res = removeElement(list, 0);
+    assert(res == 0);
+    assert(size(list) == 1);
+    destroyMaterial(material1);
     destroyList(list);
-
 }
 
 void testCopyList() {
-    List* list1 = createEmptyList((destroyFunction) destroyMaterial);
-    addElementToList(list1, createMaterial("n1", "p1", 20));
-    addElementToList(list1, createMaterial("n2", "p2", 40));
-    List* list2 = createCopyOfList(list1, (copyFunction) copyMaterial);
-    assert(sizeOfList(list1) == sizeOfList(list2));
-    Material *element = getElement(list2, 0);
-    assert(element->quantity == 20);
-}
-
-void testListOfLists() {
-    List* list1 = createEmptyList((destroyFunction) destroyList);
-    List* list2 = createEmptyList((destroyFunction) destroyMaterial);
-    addElementToList(list2, createMaterial("1","1",1));
-    addElementToList(list2, createMaterial("2","2",2));
-    addElementToList(list2, createMaterial("3","3",3));
-    addElementToList(list1,list2);
-    assert(sizeOfList(list1) == 1);
-}
-
-void testEnsureCapacity() {
-    List *list = createEmptyList((destroyFunction) destroyMaterial);
-    for (int i = 0; i < 2; i++)
-        addElementToList(list, createMaterial("da", "NU", i));
-    ensureCapacity(list);
-    assert(sizeOfList(list) == 2);
-    addElementToList(list, createMaterial("da", "NU", 4));
-    assert(sizeOfList(list) == 3);
+    Material *material1 = createMaterial("da", "nu", 1);
+    Material *material2 = createMaterial("2", "2", 2);
+    List *list = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+    add(list, material1);
+    add(list, material2);
+    List* list2 = copyList(list);
+    assert(size(list2) == 2);
+    destroyList(list);
+    destroyList(list2);
 }

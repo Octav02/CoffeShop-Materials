@@ -1,676 +1,559 @@
-        -:    0:Source:D:/Facultate/OOP/CoffeShop-Materials1/service.c
-        -:    0:Graph:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\service.c.gcno
-        -:    0:Data:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\service.c.gcda
+        -:    0:Source:/home/octav/CLionProjects/CoffeeShopMaterials/service.c
+        -:    0:Graph:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/service.c.gcno
+        -:    0:Data:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/service.c.gcda
         -:    0:Runs:1
         -:    1:#include "service.h"
-        -:    2:#include <assert.h>
+        -:    2:#include "sorting.h"
         -:    3:#include <string.h>
-        -:    4:#include <stdio.h>
+        -:    4:#include <assert.h>
         -:    5:
-        -:    6:
-function addMaterial called 8 returned 100% blocks executed 100%
-        8:    7:int addMaterial(CoffeeShop *coffeeShop, char *name, char *producer, int quantity) {
-        8:    8:    Material *material = createMaterial(name, producer, quantity);
-        8:    8-block  0
-call    0 returned 8
-        8:    9:    int errors = validateMaterial(material);
-call    0 returned 8
-        8:   10:    if (errors != 0)
-branch  0 taken 1 (fallthrough)
-branch  1 taken 7
-        1:   11:        return errors;
-        1:   11-block  0
-       11:   12:    for (int i = 0; i < coffeeShop->materialList->length; i++) {
-        7:   12-block  0
-        4:   12-block  1
-       11:   12-block  2
-branch  0 taken 5
-branch  1 taken 6 (fallthrough)
-        5:   13:        Material *material1 = coffeeShop->materialList->elements[i];
-        5:   14:        if (!strcmp(material1->name, name) && !strcmp(material1->producer, producer)) {
+function createCoffeeShop called 5 returned 100% blocks executed 100%
+        5:    6:CoffeeShop createCoffeeShop() {
+        -:    7:    CoffeeShop rez;
+        5:    8:    rez.materialList = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+        5:    8-block  0
+call    0 returned 5
+        5:    9:    rez.undoList = createEmptyList((DestroyFunction) destroyList, (CopyFunction) copyList);
+call    0 returned 5
+        5:   10:    return rez;
+        -:   11:}
+        -:   12:
+function destroyCoffeeShop called 5 returned 100% blocks executed 100%
+        5:   13:void destroyCoffeeShop(CoffeeShop *coffeeShop) {
+        5:   14:    destroyList(coffeeShop->materialList);
         5:   14-block  0
+call    0 returned 5
+        5:   15:    destroyList(coffeeShop->undoList);
+call    0 returned 5
+        5:   16:}
+        -:   17:
+function addMaterial called 13 returned 100% blocks executed 100%
+       13:   18:int addMaterial(CoffeeShop *coffeeShop, char *name, char *producer, int quantity) {
+       13:   19:    Material *material = createMaterial(name, producer, quantity);
+       13:   19-block  0
+call    0 returned 13
+       13:   20:    int res = validateMaterial(material);
+call    0 returned 13
+       13:   21:    if (res != 0) {
+branch  0 taken 1 (fallthrough)
+branch  1 taken 12
+        1:   22:        destroyMaterial(material);
+        1:   22-block  0
+call    0 returned 1
+        1:   23:        return res;
+        -:   24:    }
+       23:   25:    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+       12:   25-block  0
+       11:   25-block  1
+       23:   25-block  2
+call    0 returned 23
+branch  1 taken 12
+branch  2 taken 11 (fallthrough)
+       12:   26:        Material *current = get(coffeeShop->materialList, i);
+       12:   26-block  0
+call    0 returned 12
+       12:   27:        if (!strcmp(current->name, name) && !strcmp(current->producer, producer)) {
 branch  0 taken 2 (fallthrough)
-branch  1 taken 3
-        2:   14-block  1
+branch  1 taken 10
+        2:   27-block  0
 branch  2 taken 1 (fallthrough)
 branch  3 taken 1
-        1:   15:            material1->quantity += quantity;
-        1:   16:            coffeeShop->materialList->elements[i] = material1;
-        1:   17:            List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-        1:   17-block  0
+        1:   28:            List *toUndo = copyList(coffeeShop->materialList);
+        1:   28-block  0
 call    0 returned 1
-        1:   18:            addElementToList(coffeeShop->undoList, toUndo);
+        1:   29:            current->quantity += quantity;
+        1:   30:            add(coffeeShop->undoList, toUndo);
 call    0 returned 1
-        1:   19:            return 0;
-        -:   20:        }
-        -:   21:    }
-        6:   22:    List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-        6:   22-block  0
-call    0 returned 6
-        6:   23:    addElementToList(coffeeShop->undoList, toUndo);
-call    0 returned 6
-        6:   24:    addElementToList(coffeeShop->materialList, material);
-call    0 returned 6
-        6:   25:    return 0;
-        -:   26:
-        -:   27:}
-        -:   28:
-function updateMaterial called 2 returned 100% blocks executed 100%
-        2:   29:int updateMaterial(CoffeeShop *coffeeShop, int pos, char *newName, char *newProducer, int quantity) {
-        2:   30:    Material *material = createMaterial(newName, newProducer, quantity);
-        2:   30-block  0
-call    0 returned 2
-        2:   31:    int errors = validateMaterial(material);
-call    0 returned 2
-        2:   32:    if (errors != 0)
-branch  0 taken 1 (fallthrough)
-branch  1 taken 1
-        1:   33:        return errors;
-        1:   33-block  0
-        1:   34:    pos -= 1;
-        1:   35:    List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-        1:   35-block  0
+        1:   31:            destroyMaterial(material);
 call    0 returned 1
-        1:   36:    addElementToList(coffeeShop->undoList, toUndo);
-call    0 returned 1
-        1:   37:    updateElementFromList(coffeeShop->materialList, pos, material);
-call    0 returned 1
-        1:   38:    return 0;
-        -:   39:}
-        -:   40:
-function getMaterial called 1 returned 100% blocks executed 100%
-        1:   41:Material *getMaterial(List *list, char *name, char *producer) {
-        1:   42:    Material *WantedMaterial = createMaterial("", "", -1);
-        1:   42-block  0
-call    0 returned 1
-        2:   43:    for (int i = 0; i < sizeOfList(list); i++) {
-        1:   43-block  0
-        2:   43-block  1
-call    0 returned 2
-branch  1 taken 1
-branch  2 taken 1 (fallthrough)
-        1:   44:        Material *currentMaterial = getElement(list, i);
-        1:   44-block  0
-call    0 returned 1
-        1:   45:        if (!strcmp(currentMaterial->name, name) && !strcmp(currentMaterial->producer, producer)) {
-branch  0 taken 1 (fallthrough)
-branch  1 taken 0
-        1:   45-block  0
-branch  2 taken 1 (fallthrough)
-branch  3 taken 0
-        1:   46:            strcpy(WantedMaterial->name, currentMaterial->name);
-        1:   47:            strcpy(WantedMaterial->producer, currentMaterial->producer);
-        1:   48:            WantedMaterial->quantity = currentMaterial->quantity;
-        1:   48-block  0
-        -:   49:        }
-        -:   50:    }
-        1:   51:    return WantedMaterial;
-        1:   51-block  0
-        -:   52:}
-        -:   53://
-        -:   54:
-function undo called 2 returned 100% blocks executed 100%
-        2:   55:int undo(CoffeeShop *coffeeShop) {
-        2:   56:    if (sizeOfList(coffeeShop->undoList) == 0)
-        2:   56-block  0
-call    0 returned 2
-branch  1 taken 1 (fallthrough)
-branch  2 taken 1
-        1:   57:        return 1;
-        1:   57-block  0
-        1:   58:    List *l = coffeeShop->undoList->elements[sizeOfList(coffeeShop->undoList) - 1];
-        1:   58-block  0
-call    0 returned 1
-        1:   59:    deleteElementFromList(coffeeShop->undoList, sizeOfList(coffeeShop->undoList) - 1);
-call    0 returned 1
-call    1 returned 1
-        1:   60:    destroyList(coffeeShop->materialList);
-call    0 returned 1
-        1:   61:    coffeeShop->materialList = l;
-        1:   62:    return 0;
-        -:   63:}
-        -:   64:
-function deleteMaterial called 1 returned 100% blocks executed 100%
-        1:   65:int deleteMaterial(CoffeeShop *coffeeShop, int pos) {
-        1:   66:    pos -= 1;
-        1:   67:    List *toUndo = createCopyOfList(coffeeShop->materialList, (copyFunction) copyMaterial);
-        1:   67-block  0
-call    0 returned 1
-        1:   68:    addElementToList(coffeeShop->undoList, toUndo);
-call    0 returned 1
-        1:   69:    deleteElementFromList(coffeeShop->materialList, pos);
-call    0 returned 1
-        1:   70:    return 0;
-        -:   71:}
-        -:   72:
-function getAllMaterials called 1 returned 100% blocks executed 100%
-        1:   73:List *getAllMaterials(List *list) {
-        1:   74:    List *result = createCopyOfList(list, (copyFunction) createCopyOfList);
-        1:   74-block  0
-call    0 returned 1
-        1:   75:    return result;
-        -:   76:}
-        -:   77:
-function sizeOfMaterialList called 9 returned 100% blocks executed 100%
-        9:   78:int sizeOfMaterialList(List *list) {
-        9:   79:    return sizeOfList(list);
-        9:   79-block  0
-call    0 returned 9
-        -:   80:}
-        -:   81:
-        -:   82:
-function getAllMaterialsByName called 1 returned 100% blocks executed 100%
-        1:   83:int getAllMaterialsByName(List *list, char *name) {
-        1:   84:    int result = 0;
-        3:   85:    for (int i = 0; i < sizeOfList(list); i++) {
-        1:   85-block  0
-        2:   85-block  1
-        3:   85-block  2
+        1:   32:            return 0;
+        -:   33:        }
+        -:   34:    }
+       11:   35:    List *toUndo = copyList(coffeeShop->materialList);
+       11:   35-block  0
+call    0 returned 11
+       11:   36:    add(coffeeShop->materialList, material);
+call    0 returned 11
+       11:   37:    add(coffeeShop->undoList, toUndo);
+call    0 returned 11
+        -:   38:
+       11:   39:    return 0;
+        -:   40:}
+        -:   41:
+function updateMaterial called 3 returned 100% blocks executed 100%
+        3:   42:int updateMaterial(CoffeeShop *coffeeShop, int pos, char *name, char *producer, int quantity) {
+        3:   43:    Material *material = createMaterial(name, producer, quantity);
+        3:   43-block  0
 call    0 returned 3
-branch  1 taken 2
-branch  2 taken 1 (fallthrough)
-        2:   86:        Material *material1 = list->elements[i];
-        2:   87:        if (!strcmp(material1->name, name))
-        2:   87-block  0
-branch  0 taken 2 (fallthrough)
-branch  1 taken 0
-        2:   88:            result += material1->quantity;
-        2:   88-block  0
-        -:   89:    }
-        1:   90:    return result;
-        1:   90-block  0
-        -:   91:}
-        -:   92:
-        -:   93://
-function getMaterialsWithStartingLetter called 1 returned 100% blocks executed 100%
-        1:   94:List *getMaterialsWithStartingLetter(List *list, char letter) {
-        1:   95:    List *result = createEmptyList((destroyFunction) destroyMaterial);
-        1:   95-block  0
-call    0 returned 1
-        1:   96:    int len = sizeOfList(list);
-call    0 returned 1
-        4:   97:    for (int i = 0; i < len; i++) {
-        3:   97-block  0
-        4:   97-block  1
-branch  0 taken 3
-branch  1 taken 1 (fallthrough)
-        3:   98:        Material *material1 = list->elements[i];
-        3:   99:        if (material1->name[0] == letter)
-        3:   99-block  0
+        3:   44:    if (pos >= coffeeShop->materialList->length || pos < 0) {
 branch  0 taken 2 (fallthrough)
 branch  1 taken 1
-        2:  100:            addElementToList(result, material1);
-        2:  100-block  0
+        2:   44-block  0
+branch  2 taken 0 (fallthrough)
+branch  3 taken 2
+        1:   45:        destroyMaterial(material);
+        1:   45-block  0
+call    0 returned 1
+        1:   46:        return -1;
+        -:   47:    }
+        2:   48:    int res = validateMaterial(material);
+        2:   48-block  0
 call    0 returned 2
-        -:  101:    }
-        1:  102:    return result;
-        1:  102-block  0
-        -:  103:}
-        -:  104:
-function getMaterialsWithLessQuantity called 1 returned 100% blocks executed 100%
-        1:  105:List *getMaterialsWithLessQuantity(List *list, int quantity) {
-        1:  106:    List *result = createEmptyList((destroyFunction) destroyMaterial);
-        1:  106-block  0
+        2:   49:    if (res != 0) {
+branch  0 taken 1 (fallthrough)
+branch  1 taken 1
+        1:   50:        destroyMaterial(material);
+        1:   50-block  0
 call    0 returned 1
-        1:  107:    int len = sizeOfList(list);
+        1:   51:        return res;
+        -:   52:    }
+        1:   53:    List *toUndo = copyList(coffeeShop->materialList);
+        1:   53-block  0
 call    0 returned 1
-        4:  108:    for (int i = 0; i < len; i++) {
-        3:  108-block  0
-        4:  108-block  1
-branch  0 taken 3
-branch  1 taken 1 (fallthrough)
-        3:  109:        Material *material1 = list->elements[i];
-        3:  110:        if (material1->quantity < quantity)
-        3:  110-block  0
+        1:   54:    destroyMaterial(coffeeShop->materialList->elements[pos]);
+call    0 returned 1
+        1:   55:    res = update(coffeeShop->materialList, pos, material);
+call    0 returned 1
+        1:   56:    add(coffeeShop->undoList, toUndo);
+call    0 returned 1
+        1:   57:    return res;
+        -:   58:}
+        -:   59:
+function removeMaterial called 3 returned 100% blocks executed 100%
+        3:   60:int removeMaterial(CoffeeShop *coffeeShop, int pos) {
+        3:   61:    if (pos >= coffeeShop->materialList->length || pos < 0) {
+        3:   61-block  0
 branch  0 taken 2 (fallthrough)
 branch  1 taken 1
-        2:  111:            addElementToList(result, getElement(list, i));
-        2:  111-block  0
+        2:   61-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 2
+        1:   62:        return -1;
+        1:   62-block  0
+        -:   63:    }
+        2:   64:    List *toUndo = copyList(coffeeShop->materialList);
+        2:   64-block  0
+call    0 returned 2
+        -:   65:
+        2:   66:    int res = removeElement(coffeeShop->materialList,pos);
+call    0 returned 2
+        2:   67:    add(coffeeShop->undoList, toUndo);
+call    0 returned 2
+        2:   68:    return res;
+        -:   69:}
+        -:   70:
+function getMaterial called 2 returned 100% blocks executed 100%
+        2:   71:Material *getMaterial(CoffeeShop *coffeeShop, int pos) {
+        2:   72:    Material * res = get(coffeeShop->materialList, pos);
+        2:   72-block  0
+call    0 returned 2
+        2:   73:    return res;
+        -:   74:}
+        -:   75:
+function undo called 3 returned 100% blocks executed 100%
+        3:   76:int undo(CoffeeShop *coffeeShop) {
+        3:   77:    if (size(coffeeShop->undoList) <= 0)
+        3:   77-block  0
+call    0 returned 3
+branch  1 taken 1 (fallthrough)
+branch  2 taken 2
+        1:   78:        return 1;
+        1:   78-block  0
+        2:   79:    List *modified = get(coffeeShop->undoList,size(coffeeShop->undoList) - 1);
+        2:   79-block  0
 call    0 returned 2
 call    1 returned 2
-        -:  112:    }
-        1:  113:    return result;
-        1:  113-block  0
-        -:  114:}
-        -:  115:
-function getMaterialsOrderedByQuantity called 3 returned 100% blocks executed 100%
-        3:  116:List *getMaterialsOrderedByQuantity(List *list, int order) {
-        3:  117:    List *result = createCopyOfList(list, (copyFunction) copyMaterial);
-        3:  117-block  0
-call    0 returned 3
-        3:  118:    int len = sizeOfList(result);
-call    0 returned 3
-        7:  119:    for (int i = 0; i < len - 1; i++) {
-        4:  119-block  0
-        7:  119-block  1
-branch  0 taken 5
-branch  1 taken 2 (fallthrough)
-       11:  120:        for (int j = i + 1; j < len; j++) {
-        5:  120-block  0
-        6:  120-block  1
-       11:  120-block  2
-branch  0 taken 7
-branch  1 taken 4 (fallthrough)
-        7:  121:            Material *material1 = list->elements[i];
-        7:  122:            Material *material2 = list->elements[j];
-        7:  123:            if (order == 1) {
-        7:  123-block  0
-branch  0 taken 3 (fallthrough)
+        2:   80:    coffeeShop ->undoList->length -= 1;
+        2:   81:    destroyList(coffeeShop->materialList);
+call    0 returned 2
+        2:   82:    coffeeShop->materialList = modified;
+        2:   83:    return 0;
+        -:   84:}
+        -:   85:
+function sizeOfMaterialList called 6 returned 100% blocks executed 100%
+        6:   86:int sizeOfMaterialList(CoffeeShop *coffeeShop) {
+        6:   87:    return size(coffeeShop->materialList);
+        6:   87-block  0
+call    0 returned 6
+        -:   88:}
+        -:   89:
+function getAllMaterialsByName called 1 returned 100% blocks executed 100%
+        1:   90:int getAllMaterialsByName(CoffeeShop *coffeeShop, char *name) {
+        1:   91:    int res = 0;
+        5:   92:    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+        1:   92-block  0
+        4:   92-block  1
+        5:   92-block  2
+call    0 returned 5
 branch  1 taken 4
-        3:  124:                if (material1->quantity > material2->quantity) {
-        3:  124-block  0
+branch  2 taken 1 (fallthrough)
+        4:   93:        Material * current = get(coffeeShop->materialList,i);
+        4:   93-block  0
+call    0 returned 4
+        4:   94:        if (!strcmp(current->name, name))
 branch  0 taken 2 (fallthrough)
-branch  1 taken 1
-        2:  125:                    ElemType aux = result->elements[i];
-        2:  126:                    result->elements[i] = result->elements[j];
-        2:  127:                    result->elements[j] = aux;
-        2:  127-block  0
-        -:  128:                }
-        4:  129:            } else if (order == 0) {
-        4:  129-block  0
-branch  0 taken 3 (fallthrough)
-branch  1 taken 1
-        3:  130:                if (material1->quantity < material2->quantity) {
-        3:  130-block  0
-branch  0 taken 1 (fallthrough)
 branch  1 taken 2
-        1:  131:                    ElemType aux = result->elements[i];
-        1:  132:                    result->elements[i] = result->elements[j];
-        1:  133:                    result->elements[j] = aux;
-        1:  133-block  0
-        -:  134:                }
-        -:  135:            } else {
-        1:  136:                return list;
-        1:  136-block  0
-        -:  137:            }
-        -:  138:        }
-        -:  139:    }
-        2:  140:    return result;
-        2:  140-block  0
-        -:  141:}
-        -:  142:
-function getMaterialsOrderedByName called 3 returned 100% blocks executed 100%
-        3:  143:List *getMaterialsOrderedByName(List *list, int order) {
-        3:  144:    List *result = createCopyOfList(list, (copyFunction) copyMaterial);
-        3:  144-block  0
-call    0 returned 3
-        3:  145:    int len = sizeOfList(result);
-call    0 returned 3
-        7:  146:    for (int i = 0; i < len - 1; i++) {
-        4:  146-block  0
-        7:  146-block  1
-branch  0 taken 5
-branch  1 taken 2 (fallthrough)
-       11:  147:        for (int j = i + 1; j < len; j++) {
-        5:  147-block  0
-        6:  147-block  1
-       11:  147-block  2
-branch  0 taken 7
-branch  1 taken 4 (fallthrough)
-        7:  148:            Material *material1 = list->elements[i];
-        7:  149:            Material *material2 = list->elements[j];
-        7:  150:            if (order == 1) {
-        7:  150-block  0
-branch  0 taken 3 (fallthrough)
+        2:   95:            res += current->quantity;
+        2:   95-block  0
+        -:   96:    }
+        1:   97:    return res;
+        1:   97-block  0
+        -:   98:}
+        -:   99:
+function getAllMaterials called 1 returned 100% blocks executed 100%
+        1:  100:List *getAllMaterials(CoffeeShop *coffeeShop) {
+        1:  101:    return coffeeShop->materialList;
+        1:  101-block  0
+        -:  102:}
+        -:  103:
+function getAllMaterialssWithStartingLetter called 1 returned 100% blocks executed 100%
+        1:  104:List *getAllMaterialssWithStartingLetter(CoffeeShop *coffeeShop, char letter) {
+        1:  105:    List* res = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+        1:  105-block  0
+call    0 returned 1
+        5:  106:    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+        4:  106-block  0
+        5:  106-block  1
+call    0 returned 5
 branch  1 taken 4
-        -:  151:
-        3:  152:                if (strcmp(material1->name, material2->name) > 0) {
-        3:  152-block  0
-branch  0 taken 2 (fallthrough)
+branch  2 taken 1 (fallthrough)
+        4:  107:        Material * current = get(coffeeShop->materialList, i);
+        4:  107-block  0
+call    0 returned 4
+        4:  108:        if (current->name[0] == letter)
+branch  0 taken 3 (fallthrough)
 branch  1 taken 1
-        2:  153:                    ElemType aux = result->elements[i];
-        2:  154:                    result->elements[i] = result->elements[j];
-        2:  155:                    result->elements[j] = aux;
+        3:  109:            add(res,res->copyElement(current));
+        3:  109-block  0
+call    0 returned 3
+call    1 returned 3
+        -:  110:    }
+        1:  111:    return res;
+        1:  111-block  0
+        -:  112:}
+        -:  113:
+function getMaterialsWithLessQuantity called 1 returned 100% blocks executed 100%
+        1:  114:List *getMaterialsWithLessQuantity(CoffeeShop *coffeeShop, int quantity) {
+        1:  115:    List* res = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+        1:  115-block  0
+call    0 returned 1
+        5:  116:    for (int i = 0; i < size(coffeeShop->materialList); i++) {
+        4:  116-block  0
+        5:  116-block  1
+call    0 returned 5
+branch  1 taken 4
+branch  2 taken 1 (fallthrough)
+        4:  117:        Material * current = get(coffeeShop->materialList, i);
+        4:  117-block  0
+call    0 returned 4
+        4:  118:        if (current->quantity < quantity)
+branch  0 taken 2 (fallthrough)
+branch  1 taken 2
+        2:  119:            add(res,res->copyElement(current));
+        2:  119-block  0
+call    0 returned 2
+call    1 returned 2
+        -:  120:    }
+        1:  121:    return res;
+        1:  121-block  0
+        -:  122:}
+        -:  123:
+function cmpNameAsc called 3 returned 100% blocks executed 100%
+        3:  124:int cmpNameAsc(Material* m1, Material* m2) {
+        3:  125:    return strcmp(m1->name, m2->name);
+        3:  125-block  0
+        -:  126:}
+        -:  127:
+function cmpNameDesc called 3 returned 100% blocks executed 100%
+        3:  128:int cmpNameDesc(Material* m1, Material* m2) {
+        3:  129:    return strcmp(m2->name, m1->name);
+        3:  129-block  0
+        -:  130:}
+        -:  131:
+function cmpQuantityAsc called 3 returned 100% blocks executed 100%
+        3:  132:int cmpQuantityAsc(Material* m1, Material* m2) {
+        3:  133:    return m1->quantity > m2->quantity;
+        3:  133-block  0
+        -:  134:}
+        -:  135:
+function cmpQuantityDesc called 3 returned 100% blocks executed 100%
+        3:  136:int cmpQuantityDesc(Material* m1, Material* m2) {
+        3:  137:    return  m1->quantity < m2->quantity;
+        3:  137-block  0
+        -:  138:}
+        -:  139:
+function sortByQuantity called 2 returned 100% blocks executed 100%
+        2:  140:List *sortByQuantity(CoffeeShop *coffeeShop, int order) {
+        2:  141:    List* list = copyList(coffeeShop->materialList);
+        2:  141-block  0
+call    0 returned 2
+        2:  142:    if(order == 0)
+branch  0 taken 1 (fallthrough)
+branch  1 taken 1
+        1:  143:        sort(list, (CompareFunction) cmpQuantityAsc);
+        1:  143-block  0
+call    0 returned 1
+        -:  144:    else
+        1:  145:        sort(list, (CompareFunction) cmpQuantityDesc);
+        1:  145-block  0
+call    0 returned 1
+        2:  146:    return list;
+        2:  146-block  0
+        -:  147:}
+        -:  148:
+function sortByName called 2 returned 100% blocks executed 100%
+        2:  149:List *sortByName(CoffeeShop *coffeeShop, int order) {
+        2:  150:    List* list = copyList(coffeeShop->materialList);
+        2:  150-block  0
+call    0 returned 2
+        2:  151:    if (order == 0) {
+branch  0 taken 1 (fallthrough)
+branch  1 taken 1
+        1:  152:        sort(list, (CompareFunction) cmpNameAsc);
+        1:  152-block  0
+call    0 returned 1
+        -:  153:    } else
+        1:  154:        sort(list, (CompareFunction) cmpNameDesc);
+        1:  154-block  0
+call    0 returned 1
+        2:  155:    return list;
         2:  155-block  0
-        -:  156:                }
-        4:  157:            } else if (order == 0) {
-        4:  157-block  0
-branch  0 taken 3 (fallthrough)
+        -:  156:}
+        -:  157:
+function testCreateCoffeeShop called 1 returned 100% blocks executed 100%
+        1:  158:void testCreateCoffeeShop() {
+        1:  159:    CoffeeShop  coffeeShop = createCoffeeShop();
+        1:  159-block  0
+call    0 returned 1
+        1:  160:    destroyCoffeeShop(&coffeeShop);
+call    0 returned 1
+        1:  161:}
+function testCRUDService called 1 returned 100% blocks executed 82%
+        1:  162:void testCRUDService() {
+        1:  163:    CoffeeShop  coffeeShop = createCoffeeShop();
+        1:  163-block  0
+call    0 returned 1
+        1:  164:    addMaterial(&coffeeShop,"1","1",1);
+call    0 returned 1
+        1:  165:    addMaterial(&coffeeShop,"2","2",2);
+call    0 returned 1
+        1:  166:    addMaterial(&coffeeShop,"2","2",-4);
+call    0 returned 1
+       1*:  167:    assert(sizeOfMaterialList(&coffeeShop) == 2);
+call    0 returned 1
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:  167-block  0
+call    3 never executed
+        1:  168:    addMaterial(&coffeeShop,"1","1",2);
+        1:  168-block  0
+call    0 returned 1
+        1:  169:    Material *material = getMaterial(&coffeeShop, 0);
+call    0 returned 1
+       1*:  170:    assert(material->quantity == 3);
+branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-        3:  158:                if (strcmp(material1->name, material2->name) < 0) {
-        3:  158-block  0
-branch  0 taken 1 (fallthrough)
-branch  1 taken 2
-        1:  159:                    ElemType aux = result->elements[i];
-        1:  160:                    result->elements[i] = result->elements[j];
-        1:  161:                    result->elements[j] = aux;
-        1:  161-block  0
-        -:  162:                }
-        -:  163:            } else {
-        1:  164:                return list;
-        1:  164-block  0
-        -:  165:            }
-        -:  166:        }
-        -:  167:    }
-        2:  168:    return result;
-        2:  168-block  0
-        -:  169:}
-        -:  170:
-function createCoffeeShop called 4 returned 100% blocks executed 100%
-        4:  171:CoffeeShop createCoffeeShop() {
-        -:  172:    CoffeeShop rez;
-        4:  173:    rez.materialList = createEmptyList((destroyFunction) destroyMaterial);
-        4:  173-block  0
-call    0 returned 4
-        4:  174:    rez.undoList = createEmptyList((destroyFunction) destroyList);
-call    0 returned 4
-        4:  175:    return rez;
-        -:  176:}
+    %%%%%:  170-block  0
+call    2 never executed
+        -:  171:
+        1:  172:    updateMaterial(&coffeeShop,0,"4","5",20);
+        1:  172-block  0
+call    0 returned 1
+        1:  173:    material = getMaterial(&coffeeShop, 0);
+call    0 returned 1
+       1*:  174:    assert(material->quantity == 20);
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:  174-block  0
+call    2 never executed
+        1:  175:    updateMaterial(&coffeeShop,0,"","5",20);
+        1:  175-block  0
+call    0 returned 1
+        1:  176:    updateMaterial(&coffeeShop,60,"2","2",3);
+call    0 returned 1
         -:  177:
-function testCRUD called 1 returned 100% blocks executed 69%
-        1:  178:void testCRUD() {
-        1:  179:    CoffeeShop coffeeShop = createCoffeeShop();
-        1:  179-block  0
+        1:  178:    removeMaterial(&coffeeShop,30);
 call    0 returned 1
-        1:  180:    int res = addMaterial(&coffeeShop, "m1", "p1", 20);
+        1:  179:    removeMaterial(&coffeeShop, 1);
 call    0 returned 1
-       1*:  181:    assert(sizeOfMaterialList(coffeeShop.materialList) == 1);
+       1*:  180:    assert(sizeOfMaterialList(&coffeeShop) == 1);
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
-    %%%%%:  181-block  0
+    %%%%%:  180-block  0
 call    3 never executed
-        1:  181-block  1
-       1*:  182:    assert(sizeOfList(coffeeShop.materialList) == 1);
-        1:  182-block  0
+        1:  181:    List* all = getAllMaterials(&coffeeShop);
+        1:  181-block  0
+call    0 returned 1
+       1*:  182:    assert(size(all) == 1);
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
-    %%%%%:  182-block  1
+    %%%%%:  182-block  0
 call    3 never executed
-        1:  182-block  2
-       1*:  183:    assert(res == 0);
+        1:  183:    destroyCoffeeShop(&coffeeShop);
         1:  183-block  0
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  183-block  1
-call    2 never executed
-        1:  183-block  2
-        1:  184:    res = addMaterial(&coffeeShop, "", "p1", 30);
-        1:  184-block  0
 call    0 returned 1
-        1:  185:    res = addMaterial(&coffeeShop, "m1", "p1", 30);
-call    0 returned 1
-        1:  186:    Material *material2 = getElement(coffeeShop.materialList, 0);
-call    0 returned 1
-       1*:  187:    assert(material2->quantity == 50);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  187-block  0
-call    2 never executed
-        1:  187-block  1
-        1:  188:    material2 = getMaterial(coffeeShop.materialList, "m1", "p1");
+        -:  184:
+        1:  185:}
+        -:  186:
+function testUndo called 1 returned 100% blocks executed 81%
+        1:  187:void testUndo() {
+        1:  188:    CoffeeShop  coffeeShop = createCoffeeShop();
         1:  188-block  0
 call    0 returned 1
-        1:  189:    res = updateMaterial(&coffeeShop, 0, "m1", "m2", 20);
+        1:  189:    undo(&coffeeShop);
 call    0 returned 1
-       1*:  190:    assert(res == 0);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  190-block  0
-call    2 never executed
-        1:  190-block  1
-        1:  191:    res = updateMaterial(&coffeeShop, 0, "", "m2", 20);
-        1:  191-block  0
+        1:  190:    addMaterial(&coffeeShop,"1","1",1);
 call    0 returned 1
-        1:  192:    res = addMaterial(&coffeeShop, "m1", "p2", 30);
+        1:  191:    addMaterial(&coffeeShop,"2","2",2);
 call    0 returned 1
-       1*:  193:    assert(getAllMaterialsByName(coffeeShop.materialList, "m1") == 80);
+       1*:  192:    assert(sizeOfMaterialList(&coffeeShop) == 2);
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
-    %%%%%:  193-block  0
+    %%%%%:  192-block  0
 call    3 never executed
-        1:  193-block  1
-        1:  194:    deleteMaterial(&coffeeShop, 2);
-        1:  194-block  0
+        1:  193:    undo(&coffeeShop);
+        1:  193-block  0
 call    0 returned 1
-       1*:  195:    assert(sizeOfList(coffeeShop.materialList) == 1);
+       1*:  194:    assert(sizeOfMaterialList(&coffeeShop) == 1);
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
-    %%%%%:  195-block  0
+    %%%%%:  194-block  0
 call    3 never executed
-        1:  195-block  1
-        -:  196:
-        1:  197:    List *list2 = getAllMaterials(coffeeShop.materialList);
+        1:  195:    removeMaterial(&coffeeShop,0);
+        1:  195-block  0
+call    0 returned 1
+       1*:  196:    assert(sizeOfMaterialList(&coffeeShop) == 0);
+call    0 returned 1
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:  196-block  0
+call    3 never executed
+        1:  197:    undo(&coffeeShop);
         1:  197-block  0
 call    0 returned 1
-        1:  198:    destroyList(list2);
+       1*:  198:    assert(sizeOfMaterialList(&coffeeShop) == 1);
 call    0 returned 1
-        -:  199:
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:  198-block  0
+call    3 never executed
+        1:  199:    destroyCoffeeShop(&coffeeShop);
+        1:  199-block  0
+call    0 returned 1
         1:  200:}
         -:  201:
-function testUndo called 1 returned 100% blocks executed 67%
-        1:  202:void testUndo() {
-        1:  203:    CoffeeShop coffeeShop = createCoffeeShop();
+function testFiltering called 1 returned 100% blocks executed 85%
+        1:  202:void testFiltering() {
+        1:  203:    CoffeeShop  coffeeShop = createCoffeeShop();
         1:  203-block  0
 call    0 returned 1
-        1:  204:    int res = addMaterial(&coffeeShop, "m1", "p1", 20);
+        1:  204:    addMaterial(&coffeeShop,"1","1",1);
 call    0 returned 1
-       1*:  205:    assert(sizeOfList(coffeeShop.materialList) == 1);
+        1:  205:    addMaterial(&coffeeShop,"2","2",2);
 call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  205-block  0
-call    3 never executed
-        1:  205-block  1
-       1*:  206:    assert(sizeOfList(coffeeShop.undoList) == 1);
-        1:  206-block  0
+        1:  206:    addMaterial(&coffeeShop,"1","3",4);
 call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  206-block  1
-call    3 never executed
-        1:  206-block  2
-        1:  207:    res = undo(&coffeeShop);
-        1:  207-block  0
+        1:  207:    addMaterial(&coffeeShop,"13","3",4);
 call    0 returned 1
-       1*:  208:    assert(res == 0);
+        1:  208:    int res1 = getAllMaterialsByName(&coffeeShop,"1");
+call    0 returned 1
+       1*:  209:    assert(res1 == 5);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:  208-block  0
+    %%%%%:  209-block  0
 call    2 never executed
-        1:  208-block  1
-       1*:  209:    assert(sizeOfList(coffeeShop.materialList) == 0);
-        1:  209-block  0
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  209-block  1
-call    3 never executed
-        1:  209-block  2
-        1:  210:    res = undo(&coffeeShop);
+        1:  210:    List* filterResult = getAllMaterialssWithStartingLetter(&coffeeShop, '1');
         1:  210-block  0
 call    0 returned 1
-        1:  211:}
-        -:  212:
-function testFiltering called 1 returned 100% blocks executed 65%
-        1:  213:void testFiltering() {
-        1:  214:    CoffeeShop coffeeShop = createCoffeeShop();
-        1:  214-block  0
-call    0 returned 1
-        -:  215:
-        1:  216:    addMaterial(&coffeeShop, "dan", "o2", 4);
-call    0 returned 1
-        1:  217:    addMaterial(&coffeeShop, "rob", "ewq", 5);
-call    0 returned 1
-        1:  218:    addMaterial(&coffeeShop, "d", "titan", 2);
-call    0 returned 1
-       1*:  219:    assert(sizeOfMaterialList(coffeeShop.materialList) == 3);
+       1*:  211:    assert(size(filterResult) == 3);
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
-    %%%%%:  219-block  0
+    %%%%%:  211-block  0
 call    3 never executed
-        1:  219-block  1
-        1:  220:    List *filterResult = getMaterialsWithStartingLetter(coffeeShop.materialList, 'd');
-        1:  220-block  0
+        1:  212:    destroyList(filterResult);
+        1:  212-block  0
 call    0 returned 1
-        1:  221:    Material *material1 = getElement(filterResult, 0);
+        1:  213:    filterResult = getMaterialsWithLessQuantity(&coffeeShop, 3);
 call    0 returned 1
-        1:  222:    Material *material2 = getElement(filterResult, 1);
-call    0 returned 1
-       1*:  223:    assert(material1->quantity == 4);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  223-block  0
-call    2 never executed
-        1:  223-block  1
-       1*:  224:    assert(material2->quantity == 2);
-        1:  224-block  0
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  224-block  1
-call    2 never executed
-        1:  224-block  2
-        -:  225:
-        1:  226:    filterResult = getMaterialsWithLessQuantity(coffeeShop.materialList, 5);
-        1:  226-block  0
-call    0 returned 1
-       1*:  227:    assert(sizeOfMaterialList(filterResult) == 2);
+       1*:  214:    assert(size(filterResult) == 2);
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
+    %%%%%:  214-block  0
+call    3 never executed
+        1:  215:    destroyList(filterResult);
+        1:  215-block  0
+call    0 returned 1
+        1:  216:    destroyCoffeeShop(&coffeeShop);
+call    0 returned 1
+        -:  217:
+        1:  218:}
+        -:  219:
+function testSorting called 1 returned 100% blocks executed 85%
+        1:  220:void testSorting() {
+        1:  221:    CoffeeShop  coffeeShop = createCoffeeShop();
+        1:  221-block  0
+call    0 returned 1
+        1:  222:    addMaterial(&coffeeShop, "a","1",3);
+call    0 returned 1
+        1:  223:    addMaterial(&coffeeShop, "c","2",2);
+call    0 returned 1
+        1:  224:    addMaterial(&coffeeShop, "b","5",1);
+call    0 returned 1
+        1:  225:    List * sortResult = sortByName(&coffeeShop,0);
+call    0 returned 1
+        1:  226:    Material *material = get(sortResult, 1);
+call    0 returned 1
+       1*:  227:    assert(material->quantity == 1);
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
     %%%%%:  227-block  0
-call    3 never executed
-        1:  227-block  1
-        1:  228:    material1 = getElement(filterResult, 0);
+call    2 never executed
+        1:  228:    destroyList(sortResult);
         1:  228-block  0
 call    0 returned 1
-        1:  229:    material2 = getElement(filterResult, 1);
+        1:  229:    sortResult = sortByName(&coffeeShop,1);
 call    0 returned 1
-       1*:  230:    assert(material1->quantity == 4);
+        1:  230:    material = get(sortResult,0);
+call    0 returned 1
+       1*:  231:    assert(material->quantity == 2);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:  230-block  0
+    %%%%%:  231-block  0
 call    2 never executed
-        1:  230-block  1
-       1*:  231:    assert(material2->quantity == 2);
-        1:  231-block  0
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  231-block  1
-call    2 never executed
-        1:  231-block  2
-        1:  232:    filterResult = getMaterialsOrderedByQuantity(coffeeShop.materialList, 1);
+        1:  232:    destroyList(sortResult);
         1:  232-block  0
 call    0 returned 1
-        1:  233:    material1 = getElement(filterResult, 0);
+        1:  233:    sortResult = sortByQuantity(&coffeeShop,0);
 call    0 returned 1
-       1*:  234:    assert(material1->quantity == 2);
+        1:  234:    material = get(sortResult,0);
+call    0 returned 1
+       1*:  235:    assert(material->quantity == 1);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:  234-block  0
+    %%%%%:  235-block  0
 call    2 never executed
-        1:  234-block  1
-       1*:  235:    assert(sizeOfMaterialList(filterResult) == 3);
-        1:  235-block  0
+        1:  236:    destroyList(sortResult);
+        1:  236-block  0
 call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  235-block  1
-call    3 never executed
-        1:  235-block  2
-        -:  236:
-        1:  237:    filterResult = getMaterialsOrderedByQuantity(coffeeShop.materialList, 0);
-        1:  237-block  0
+        -:  237:
+        1:  238:    sortResult = sortByQuantity(&coffeeShop,1);
 call    0 returned 1
-        1:  238:    material1 = getElement(filterResult, 0);
+        1:  239:    material = get(sortResult,0);
 call    0 returned 1
-       1*:  239:    assert(material1->quantity == 5);
+       1*:  240:    assert(material->quantity == 3);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:  239-block  0
+    %%%%%:  240-block  0
 call    2 never executed
-        1:  239-block  1
-       1*:  240:    assert(sizeOfMaterialList(filterResult) == 3);
-        1:  240-block  0
+        1:  241:    destroyList(sortResult);
+        1:  241-block  0
 call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  240-block  1
-call    3 never executed
-        1:  240-block  2
-        -:  241://
-        1:  242:    filterResult = getMaterialsOrderedByQuantity(coffeeShop.materialList, 6);
-        1:  242-block  0
+        1:  242:    destroyCoffeeShop(&coffeeShop);
 call    0 returned 1
-        1:  243:    material1 = getElement(filterResult, 0);
-call    0 returned 1
-       1*:  244:    assert(material1->quantity == 4);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  244-block  0
-call    2 never executed
-        1:  244-block  1
-       1*:  245:    assert(sizeOfMaterialList(filterResult) == 3);
-        1:  245-block  0
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  245-block  1
-call    3 never executed
-        1:  245-block  2
-        -:  246://
-        1:  247:    filterResult = getMaterialsOrderedByName(coffeeShop.materialList, 1);
-        1:  247-block  0
-call    0 returned 1
-        1:  248:    material1 = getElement(filterResult, 0);
-call    0 returned 1
-       1*:  249:    assert(material1->quantity == 2);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  249-block  0
-call    2 never executed
-        1:  249-block  1
-       1*:  250:    assert(sizeOfMaterialList(filterResult) == 3);
-        1:  250-block  0
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  250-block  1
-call    3 never executed
-        1:  250-block  2
-        -:  251://
-        1:  252:    filterResult = getMaterialsOrderedByName(coffeeShop.materialList, 0);
-        1:  252-block  0
-call    0 returned 1
-        1:  253:    material1 = getElement(filterResult, 0);
-call    0 returned 1
-       1*:  254:    assert(material1->quantity == 5);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  254-block  0
-call    2 never executed
-        1:  254-block  1
-       1*:  255:    assert(sizeOfMaterialList(filterResult) == 3);
-        1:  255-block  0
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  255-block  1
-call    3 never executed
-        1:  255-block  2
-        -:  256://
-        1:  257:    filterResult = getMaterialsOrderedByName(coffeeShop.materialList, 6);
-        1:  257-block  0
-call    0 returned 1
-        1:  258:    material1 = getElement(filterResult, 0);
-call    0 returned 1
-       1*:  259:    assert(material1->quantity == 4);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:  259-block  0
-call    2 never executed
-        1:  259-block  1
-       1*:  260:    assert(sizeOfMaterialList(filterResult) == 3);
-        1:  260-block  0
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  260-block  1
-call    3 never executed
-        1:  260-block  2
-        -:  261:
-        1:  262:}
+        1:  243:}

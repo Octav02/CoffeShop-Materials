@@ -1,311 +1,282 @@
-        -:    0:Source:D:/Facultate/OOP/CoffeShop-Materials1/list.c
-        -:    0:Graph:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\list.c.gcno
-        -:    0:Data:D:\Facultate\OOP\CoffeShop-Materials1\cmake-build-debug-coverage\CMakeFiles\Lab2_4.dir\list.c.gcda
+        -:    0:Source:/home/octav/CLionProjects/CoffeeShopMaterials/list.c
+        -:    0:Graph:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/list.c.gcno
+        -:    0:Data:/home/octav/CLionProjects/CoffeeShopMaterials/cmake-build-debug-coverage/CMakeFiles/CoffeeShop_Materials.dir/list.c.gcda
         -:    0:Runs:1
         -:    1:#include "list.h"
-        -:    2:#include <assert.h>
+        -:    2:
         -:    3:#include <string.h>
-        -:    4:#include <stdlib.h>
-        -:    5:#include <stdio.h>
+        -:    4:#include <assert.h>
+        -:    5:#include <stdlib.h>
         -:    6:
-function createEmptyList called 33 returned 100% blocks executed 100%
-       33:    7:List* createEmptyList(destroyFunction f) {
-       33:    8:    List *rez = malloc(sizeof(List));
-       33:    9:    rez->capacity = 2;
-       33:   10:    rez->elements = malloc(sizeof(ElemType) * rez->capacity);
-       33:   11:    rez->length = 0;
-       33:   12:    rez->deleteElement = f;
-       33:   13:    return rez;
-       33:   13-block  0
-        -:   14:}
-        -:   15:
-function destroyList called 6 returned 100% blocks executed 100%
-        6:   16:void destroyList(List *list) {
-        9:   17:    for (int i = 0; i < sizeOfList(list); i++)
-        6:   17-block  0
-        9:   17-block  1
-call    0 returned 9
-branch  1 taken 3
-branch  2 taken 6 (fallthrough)
-        3:   18:        list -> deleteElement(list->elements[i]);
-        3:   18-block  0
-call    0 returned 3
-        6:   19:    free(list->elements);
-        6:   20:    free(list);
-        6:   21:}
-        -:   22:
-function getElement called 47 returned 100% blocks executed 100%
-       47:   23:ElemType getElement(List *list, int pos) {
-       47:   24:    return list->elements[pos];
-       47:   24-block  0
-        -:   25:}
-        -:   26:
+function createEmptyList called 35 returned 100% blocks executed 100%
+       35:    7:List *createEmptyList(DestroyFunction f1, CopyFunction f2) {
+       35:    8:    List *rez = malloc(sizeof(List));
+       35:    9:    rez->length = 0;
+       35:   10:    rez->capacity = 2;
+       35:   11:    rez->elements = malloc(sizeof(ElemType) * rez->capacity);
+       35:   12:    rez->deleteElement = f1;
+       35:   13:    rez->copyElement = f2;
+       35:   14:    return rez;
+       35:   14-block  0
+        -:   15:}
+        -:   16:
+function destroyList called 35 returned 100% blocks executed 100%
+       35:   17:void destroyList(List *list) {
+       97:   18:    for (int i = 0; i < list->length; i++)
+       35:   18-block  0
+       97:   18-block  1
+branch  0 taken 62
+branch  1 taken 35 (fallthrough)
+       62:   19:        list->deleteElement(list->elements[i]);
+       62:   19-block  0
+call    0 returned 62
+       35:   20:    free(list->elements);
+       35:   21:    free(list);
+       35:   22:}
+        -:   23:
+function get called 89 returned 100% blocks executed 100%
+       89:   24:ElemType get(List *list, int pos) {
+       89:   25:    return list->elements[pos];
+       89:   25-block  0
+        -:   26:}
         -:   27:
-function sizeOfList called 98 returned 100% blocks executed 100%
-       98:   28:int sizeOfList(List *list) {
-       98:   29:    return list->length;
-       98:   29-block  0
+function size called 139 returned 100% blocks executed 100%
+      139:   28:int size(List *list) {
+      139:   29:    return list->length;
+      139:   29-block  0
         -:   30:}
         -:   31:
-function ensureCapacity called 60 returned 100% blocks executed 100%
-       60:   32:void ensureCapacity(List *list) {
-       60:   33:    if (list->length < list->capacity)
-       60:   33-block  0
-branch  0 taken 48 (fallthrough)
-branch  1 taken 12
-       48:   34:        return;
-       48:   34-block  0
-       12:   35:    int newCapacity = list->capacity + 2;
-       12:   36:    ElemType *newElements = malloc(sizeof(ElemType) * newCapacity);
-        -:   37:
-       38:   38:    for (int i = 0; i < list->length; i++)
-       12:   38-block  0
-       38:   38-block  1
-branch  0 taken 26
-branch  1 taken 12 (fallthrough)
-       26:   39:        newElements[i] = list->elements[i];
-       26:   39-block  0
-        -:   40:
-       12:   41:    free(list->elements);
-       12:   42:    list->elements = newElements;
-       12:   43:    list->capacity = newCapacity;
-       12:   43-block  0
-        -:   44:}
-        -:   45:
-function addElementToList called 59 returned 100% blocks executed 100%
-       59:   46:void addElementToList(List *list, ElemType element) {
-       59:   47:    ensureCapacity(list);
-       59:   47-block  0
-call    0 returned 59
-       59:   48:    list->elements[list->length] = element;
-       59:   49:    list->length++;
-       59:   50:}
-        -:   51:
-function deleteElementFromList called 3 returned 100% blocks executed 80%
-        3:   52:void deleteElementFromList(List *list, int index) {
-       3*:   53:    for (int i = index; i < sizeOfList(list) - 1; i++)
-        3:   53-block  0
-        3:   53-block  1
+function ensureCapacity called 69 returned 100% blocks executed 100%
+       69:   32:void ensureCapacity(List *list) {
+       69:   33:    if (list->length < list->capacity) {
+       69:   33-block  0
+branch  0 taken 56 (fallthrough)
+branch  1 taken 13
+       56:   34:        return; //we have room
+       56:   34-block  0
+        -:   35:    }
+       13:   36:    ElemType *newElements = malloc(sizeof(ElemType) * (list->capacity + 2));
+       41:   37:    for (int i = 0; i < list->length; i++) {
+       13:   37-block  0
+       41:   37-block  1
+branch  0 taken 28
+branch  1 taken 13 (fallthrough)
+       28:   38:        newElements[i] = list->elements[i];
+       28:   38-block  0
+        -:   39:    }
+       13:   40:    free(list->elements);
+       13:   41:    list->elements = newElements;
+       13:   42:    list->capacity += 2;
+       13:   42-block  0
+        -:   43:}
+        -:   44:
+function add called 67 returned 100% blocks executed 100%
+       67:   45:void add(List *list, ElemType element) {
+       67:   46:    ensureCapacity(list);
+       67:   46-block  0
+call    0 returned 67
+       67:   47:    list->elements[list->length++] = element;
+       67:   48:}
+        -:   49:
+function update called 15 returned 100% blocks executed 100%
+       15:   50:int update(List *list, int pos, ElemType element) {
+       15:   51:    if (pos >= list->length || pos < 0)
+       15:   51-block  0
+branch  0 taken 14 (fallthrough)
+branch  1 taken 1
+       14:   51-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 14
+        1:   52:        return -1;
+        1:   52-block  0
+       14:   53:    list->elements[pos] = element;
+       14:   54:    return 0;
+       14:   54-block  0
+        -:   55:}
+        -:   56:
+function removeElement called 4 returned 100% blocks executed 100%
+        4:   57:int removeElement(List *list, int pos) {
+        4:   58:    if (pos >= list->length || pos < 0)
+        4:   58-block  0
+branch  0 taken 3 (fallthrough)
+branch  1 taken 1
+        3:   58-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 3
+        1:   59:        return -1;
+        1:   59-block  0
+        3:   60:    ElemType *newElements = malloc(sizeof(ElemType) * (list->capacity + 2));
+        3:   61:    int k = 0;
+        8:   62:    for (int i = 0; i < list->length; i++) {
+        3:   62-block  0
+        5:   62-block  1
+        8:   62-block  2
+branch  0 taken 5
+branch  1 taken 3 (fallthrough)
+        5:   63:        if (i != pos)
+        5:   63-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 3
+        2:   64:            newElements[k++] = list->elements[i];
+        2:   64-block  0
+        -:   65:        else
+        3:   66:            list->deleteElement(list->elements[i]);
+        3:   66-block  0
 call    0 returned 3
-branch  1 taken 0
-branch  2 taken 3 (fallthrough)
-    #####:   54:        list->elements[i] = list->elements[i + 1];
-    %%%%%:   54-block  0
-        3:   55:    list->length--;
-        3:   56:}
-        -:   57:
-function updateElementFromList called 2 returned 100% blocks executed 100%
-        2:   58:void updateElementFromList(List *list, int index, ElemType updatedElement) {
-        2:   59:    list->elements[index] = updatedElement;
-        2:   60:}
-        -:   61:
-        -:   62:
-function createCopyOfList called 17 returned 100% blocks executed 100%
-       17:   63:List* createCopyOfList(List *list, copyFunction f) {
-       17:   64:    List* copyList = createEmptyList(list->deleteElement);
-       17:   64-block  0
-call    0 returned 17
-       46:   65:    for (int i = 0; i < sizeOfList(list); i++) {
-       46:   65-block  0
-call    0 returned 46
-branch  1 taken 29
-branch  2 taken 17 (fallthrough)
-       29:   66:        ElemType current = getElement(list, i);
-       29:   66-block  0
-call    0 returned 29
-       29:   67:        addElementToList(copyList, current);
-call    0 returned 29
-        -:   68:    }
-       17:   69:    return copyList;
-       17:   69-block  0
-        -:   70:}
-        -:   71:
-function testCreateList called 1 returned 100% blocks executed 75%
-        1:   72:void testCreateList() {
-        1:   73:    List * list = createEmptyList((destroyFunction) destroyMaterial);
-        1:   73-block  0
+        -:   67:    }
+        -:   68:
+        3:   69:    free(list->elements);
+        3:   70:    list->elements = newElements;
+        3:   71:    list->length -= 1;
+        3:   72:    return 0;
+        3:   72-block  0
+        -:   73:}
+        -:   74:
+function copyList called 20 returned 100% blocks executed 100%
+       20:   75:List *copyList(List *list) {
+       20:   76:    List *rez = createEmptyList(list->deleteElement, list->copyElement);
+       20:   76-block  0
+call    0 returned 20
+       52:   77:    for (int i = 0; i < size(list); i++) {
+       52:   77-block  0
+call    0 returned 52
+branch  1 taken 32
+branch  2 taken 20 (fallthrough)
+       32:   78:        ElemType current = get(list, i);
+       32:   78-block  0
+call    0 returned 32
+       32:   79:        add(rez, rez->copyElement(current));
+call    0 returned 32
+call    1 returned 32
+        -:   80:    }
+       20:   81:    return rez;
+       20:   81-block  0
+        -:   82:}
+        -:   83:
+function testCreateDestroyList called 1 returned 100% blocks executed 71%
+        1:   84:void testCreateDestroyList() {
+        1:   85:    List *list1 = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+        1:   85-block  0
 call    0 returned 1
-       1*:   74:    assert(sizeOfList(list) == 0);
+       1*:   86:    assert(list1->length == 0);
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:   86-block  0
+call    2 never executed
+       1*:   87:    assert(list1->capacity == 2);
+        1:   87-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:   87-block  1
+call    2 never executed
+        1:   88:    destroyList(list1);
+        1:   88-block  0
+call    0 returned 1
+        1:   89:}
+        -:   90:
+function testCRUDList called 1 returned 100% blocks executed 78%
+        1:   91:void testCRUDList() {
+        1:   92:    Material *material1 = createMaterial("da", "nu", 1);
+        1:   92-block  0
+call    0 returned 1
+        1:   93:    Material *material2 = createMaterial("2", "2", 2);
+call    0 returned 1
+        1:   94:    Material *material3 = createMaterial("1", "1", 1);
+call    0 returned 1
+        1:   95:    List *list = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+call    0 returned 1
+        1:   96:    ensureCapacity(list);
+call    0 returned 1
+        1:   97:    add(list, material1);
+call    0 returned 1
+        1:   98:    add(list, material2);
+call    0 returned 1
+       1*:   99:    assert(size(list) == 2);
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
-    %%%%%:   74-block  0
+    %%%%%:   99-block  0
 call    3 never executed
-        1:   74-block  1
-        1:   75:    destroyList(list);
-        1:   75-block  0
+        1:  100:    ensureCapacity(list);
+        1:  100-block  0
 call    0 returned 1
-        1:   76:}
-        -:   77:
-function testIterateList called 1 returned 100% blocks executed 70%
-        1:   78:void testIterateList() {
-        1:   79:    List* list = createEmptyList((destroyFunction) destroyMaterial);
-        1:   79-block  0
+        1:  101:    Material *material4 = get(list, 0);
 call    0 returned 1
-        1:   80:    Material* material = createMaterial("n1", "p1", 20);
-call    0 returned 1
-        1:   81:    Material* material1 = createMaterial("n2", "p2", 40);
-call    0 returned 1
-        1:   82:    addElementToList(list, material);
-call    0 returned 1
-        1:   83:    Material* material2 = getElement(list, 0);
-call    0 returned 1
-       1*:   84:    assert(material2->quantity == 20);
+       1*:  102:    assert(material4 == material1);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:   84-block  0
+    %%%%%:  102-block  0
 call    2 never executed
-        1:   84-block  1
-        -:   85:
-        1:   86:    addElementToList(list, material1);
-        1:   86-block  0
+        1:  103:    int res = update(list, 6, material4);
+        1:  103-block  0
 call    0 returned 1
-        1:   87:    int length = sizeOfList(list);
-call    0 returned 1
-       1*:   88:    assert(length == 2);
+       1*:  104:    assert(res == -1);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:   88-block  0
+    %%%%%:  104-block  0
 call    2 never executed
-        1:   88-block  1
-        1:   89:    updateElementFromList(list, 0, createMaterial("n2", "p2", 40));
-        1:   89-block  0
+        1:  105:    res = removeElement(list, 6);
+        1:  105-block  0
 call    0 returned 1
-call    1 returned 1
-        1:   90:    material2 = getElement(list, 0);
-call    0 returned 1
-       1*:   91:    assert(material2->quantity == 40);
+       1*:  106:    assert(res == -1);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:   91-block  0
+    %%%%%:  106-block  0
 call    2 never executed
-        1:   91-block  1
-        1:   92:    deleteElementFromList(list, 1);
-        1:   92-block  0
+        1:  107:    res = update(list, 0, material3);
+        1:  107-block  0
 call    0 returned 1
-        1:   93:    length = sizeOfList(list);
-call    0 returned 1
-       1*:   94:    assert(length == 1);
+       1*:  108:    assert(res == 0);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
-    %%%%%:   94-block  0
-call    2 never executed
-        1:   94-block  1
-        1:   95:    length = sizeOfList(list);
-        1:   95-block  0
-call    0 returned 1
-       1*:   96:    assert(length == 1);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:   96-block  0
-call    2 never executed
-        1:   96-block  1
-        1:   97:    Material *elem = getElement(list, 1);
-        1:   97-block  0
-call    0 returned 1
-       1*:   98:    assert(elem->quantity == 40);
-branch  0 taken 0 (fallthrough)
-branch  1 taken 1
-    %%%%%:   98-block  0
-call    2 never executed
-        1:   98-block  1
-        1:   99:    destroyList(list);
-        1:   99-block  0
-call    0 returned 1
-        -:  100:
-        1:  101:}
-        -:  102:
-function testCopyList called 1 returned 100% blocks executed 78%
-        1:  103:void testCopyList() {
-        1:  104:    List* list1 = createEmptyList((destroyFunction) destroyMaterial);
-        1:  104-block  0
-call    0 returned 1
-        1:  105:    addElementToList(list1, createMaterial("n1", "p1", 20));
-call    0 returned 1
-call    1 returned 1
-        1:  106:    addElementToList(list1, createMaterial("n2", "p2", 40));
-call    0 returned 1
-call    1 returned 1
-        1:  107:    List* list2 = createCopyOfList(list1, (copyFunction) copyMaterial);
-call    0 returned 1
-       1*:  108:    assert(sizeOfList(list1) == sizeOfList(list2));
-call    0 returned 1
-call    1 returned 1
-branch  2 taken 0 (fallthrough)
-branch  3 taken 1
     %%%%%:  108-block  0
-call    4 never executed
-        1:  108-block  1
-        1:  109:    Material *element = getElement(list2, 0);
+call    2 never executed
+        1:  109:    res = removeElement(list, 0);
         1:  109-block  0
 call    0 returned 1
-       1*:  110:    assert(element->quantity == 20);
+       1*:  110:    assert(res == 0);
 branch  0 taken 0 (fallthrough)
 branch  1 taken 1
     %%%%%:  110-block  0
 call    2 never executed
-        1:  110-block  1
-        1:  111:}
-        -:  112:
-function testListOfLists called 1 returned 100% blocks executed 87%
-        1:  113:void testListOfLists() {
-        1:  114:    List* list1 = createEmptyList((destroyFunction) destroyList);
-        1:  114-block  0
-call    0 returned 1
-        1:  115:    List* list2 = createEmptyList((destroyFunction) destroyMaterial);
-call    0 returned 1
-        1:  116:    addElementToList(list2, createMaterial("1","1",1));
-call    0 returned 1
-call    1 returned 1
-        1:  117:    addElementToList(list2, createMaterial("2","2",2));
-call    0 returned 1
-call    1 returned 1
-        1:  118:    addElementToList(list2, createMaterial("3","3",3));
-call    0 returned 1
-call    1 returned 1
-        1:  119:    addElementToList(list1,list2);
-call    0 returned 1
-       1*:  120:    assert(sizeOfList(list1) == 1);
+       1*:  111:    assert(size(list) == 1);
+        1:  111-block  0
 call    0 returned 1
 branch  1 taken 0 (fallthrough)
 branch  2 taken 1
-    %%%%%:  120-block  0
+    %%%%%:  111-block  1
 call    3 never executed
-        1:  120-block  1
-        1:  121:}
-        -:  122:
-function testEnsureCapacity called 1 returned 100% blocks executed 80%
-        1:  123:void testEnsureCapacity() {
-        1:  124:    List *list = createEmptyList((destroyFunction) destroyMaterial);
+        1:  112:    destroyMaterial(material1);
+        1:  112-block  0
+call    0 returned 1
+        1:  113:    destroyList(list);
+call    0 returned 1
+        1:  114:}
+        -:  115:
+function testCopyList called 1 returned 100% blocks executed 92%
+        1:  116:void testCopyList() {
+        1:  117:    Material *material1 = createMaterial("da", "nu", 1);
+        1:  117-block  0
+call    0 returned 1
+        1:  118:    Material *material2 = createMaterial("2", "2", 2);
+call    0 returned 1
+        1:  119:    List *list = createEmptyList((DestroyFunction) destroyMaterial, (CopyFunction) copyMaterial);
+call    0 returned 1
+        1:  120:    add(list, material1);
+call    0 returned 1
+        1:  121:    add(list, material2);
+call    0 returned 1
+        1:  122:    List* list2 = copyList(list);
+call    0 returned 1
+       1*:  123:    assert(size(list2) == 2);
+call    0 returned 1
+branch  1 taken 0 (fallthrough)
+branch  2 taken 1
+    %%%%%:  123-block  0
+call    3 never executed
+        1:  124:    destroyList(list);
         1:  124-block  0
 call    0 returned 1
-        3:  125:    for (int i = 0; i < 2; i++)
-        3:  125-block  0
-branch  0 taken 2
-branch  1 taken 1 (fallthrough)
-        2:  126:        addElementToList(list, createMaterial("da", "NU", i));
-        2:  126-block  0
-call    0 returned 2
-call    1 returned 2
-        1:  127:    ensureCapacity(list);
-        1:  127-block  0
+        1:  125:    destroyList(list2);
 call    0 returned 1
-       1*:  128:    assert(sizeOfList(list) == 2);
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  128-block  0
-call    3 never executed
-        1:  128-block  1
-        1:  129:    addElementToList(list, createMaterial("da", "NU", 4));
-        1:  129-block  0
-call    0 returned 1
-call    1 returned 1
-       1*:  130:    assert(sizeOfList(list) == 3);
-call    0 returned 1
-branch  1 taken 0 (fallthrough)
-branch  2 taken 1
-    %%%%%:  130-block  0
-call    3 never executed
-        1:  130-block  1
-        1:  131:}
+        1:  126:}
